@@ -1,0 +1,12 @@
+
+func start() {
+   var t = new Tetris();
+
+   try {
+      t.gameLoop();
+   } catch(e) {
+      e.printStackTrace();
+   }
+}
+
+start();

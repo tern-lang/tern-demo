@@ -1,0 +1,16 @@
+import util.concurrent.locks.LockSupport;
+import util.concurrent.TimeUnit;
+import time.temporal.ChronoUnit;
+import time.temporal.ChronoField;
+import time.Instant;
+
+module TickTockClock {
+
+   timeMicros() {
+      return ChronoUnit.MICROS.between(Instant.EPOCH, Instant.now());
+   }
+   
+   sleepMicros(duration) {
+      LockSupport.parkNanos(TimeUnit.MICROSECONDS.toNanos(duration));
+   }
+}

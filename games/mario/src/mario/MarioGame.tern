@@ -1,0 +1,16 @@
+import static lang.Integer.*;
+import mario.core.GameFrame;
+
+func start(scale) {
+   let g = new GameFrame(scale);
+
+   try {
+      g.start();
+      sleep(MAX_VALUE);
+   } catch(e) {
+      e.printStackTrace();
+   }
+}
+
+start(2);
+

@@ -1,0 +1,94 @@
+import net.Socket;
+import util.concurrent.TimeUnit;
+
+class TickTockClient {
+
+   const averager;
+   const socket;
+
+   new(host, port) {
+      this.socket = Socket(host, port);
+      this.averager = Averager(10);
+   }
+
+   start(listener: (accuracy)) {
+      const input = socket.getInputStream();
+      const output = socket.getOutputStream();
+      const reader = DataInputStream(input);
+      const writer = DataOutputStream(output);
+      const second = TimeUnit.SECONDS.toMicros(1);
+      const startTime = TickTockClock.timeMicros();
+               
+      socket.setTcpNoDelay(true);
+      writer.writeLong(startTime);
+      writer.flush();
+      
+      loop {
+         const remoteTime = reader.readLong(); // read remote time
+         const accuracy = reader.readLong(); // read remote accuracy
+         const localTime = TickTockClock.timeMicros(); // current local time
+         const adjustTime = averager.average();
+         const pingTime = (localTime + adjustTime) + second; // what time will result in match
+         
+         loop {
+            const currentTime = TickTockClock.timeMicros();
+            const currentDiff = pingTime - currentTime;
+            
+            if(currentDiff < 0) { // spin until difference is exact
+               writer.writeLong(remoteTime + second);
+               writer.flush();
+               break;
+            } else {
+               if(currentDiff > 1000) {
+                  TickTockClock.sleepMicros(currentDiff - 500);
+               }
+            }
+         }
+         averager.update(-1 * (accuracy * 0.9));
+         listener(accuracy); // report on accuracy should be async
+      }
+   }
+   
+   class Averager {
+   
+      const queue;
+      const capacity;
+      const samples;
+      
+      new(capacity) {
+         this.queue = PriorityQueue();
+         this.samples = ArrayDeque(capacity);
+         this.capacity = capacity;
+      }
+   
+      update(sample) {
+         if(samples.length >= capacity) {
+            samples.removeLast();
+         }
+         samples.addFirst(sample);
+         
+         return average();
+      }
+      
+      average() {
+         let tenPercent = Math.round(samples.length * 0.1);
+         let eightyPercent = samples.length - (tenPercent * 2);
+
+         if(eightyPercent > 0) {
+            let total = 0;
+                  
+            queue.clear();
+            queue.addAll(samples);
+         
+            for(i in 0 to tenPercent - 1) { // remove lowest 10%
+               queue.poll();
+            }
+            for(i in 0 to eightyPercent - 1) { // ignore highest 10% 
+               total += queue.poll();
+            }
+            return total / eightyPercent;
+         }
+         return 0;
+      }
+   }
+}

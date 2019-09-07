@@ -1,0 +1,30 @@
+
+for(i in 0 to 10000) {
+   try {
+      roundTrip(i);
+   } catch(e) {
+      e.printStackTrace();
+   }
+}
+
+func roundTrip(count) {
+   let url = "https://apigw.exchange-demo-test.hydra-dev.weareadaptive.com/instrument/spot-instruments/all";
+   let creds = Base64.getEncoder().encodeToString("admin1:password12".getBytes());
+   let response = URL(url)   
+      .header("Authorization", "Basic " + creds)
+      .header("Accept", "*/*")
+      .get()
+      .response();
+   
+   if(response.status != 200) {
+      println("GET ${url}");   
+      println(response);
+      println();
+   }
+   let name = Thread.currentThread().getName();
+   println("${name}: ${count} ${url}");
+}
+
+
+
+

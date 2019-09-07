@@ -1,0 +1,33 @@
+import security.SecureRandom;
+import util.concurrent.TimeUnit;
+
+class TickTockAgent with Runnable {
+
+   const random = SecureRandom().nextInt(5000000); // random 5 second difference
+   const socket;
+
+   new(socket) {
+      this.socket = socket;
+   }
+
+   run() {
+      try {
+         const input = socket.getInputStream();
+         const output = socket.getOutputStream();
+         const writer = DataOutputStream(output);
+         const reader = DataInputStream(input);
+
+         loop {
+            const expectTime = reader.readLong();
+            const localTime = TickTockClock.timeMicros() + random;
+            const accuracy = localTime - expectTime;
+
+            writer.writeLong(localTime);
+            writer.writeLong(accuracy);
+            writer.flush();
+         }
+      }catch(e) {
+         e.printStackTrace();
+      }
+   }
+}

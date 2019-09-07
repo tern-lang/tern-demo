@@ -1,0 +1,15 @@
+import util.concurrent.TimeUnit;
+import util.concurrent.ArrayBlockingQueue;
+
+const server = TickTockServer(1992);
+const client = TickTockClient("0.0.0.0", 1992);
+const queue = ArrayBlockingQueue(1000);
+
+Thread(-> {
+   loop {
+      println(queue.take + " micros");
+   }
+}).start();
+
+server.start();
+client.start(queue::offer);
