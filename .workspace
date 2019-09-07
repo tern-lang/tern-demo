@@ -1,6 +1,6 @@
 <workspace>
   <environment>
-    <variable name="PROJECT_ROOT">C:\Work\development\tern-lang\tern-studio\tern-studio\work</variable>
+    <variable name="PROJECT_ROOT">C:\Work\development\tern-lang\tern-demo</variable>
   </environment>
   <arguments>
     <argument>-Xmx100m</argument>
