@@ -1,0 +1,20 @@
+
+class Item {
+   const date;
+   const action;
+   const description;
+   const amount;
+   const balance;
+   
+   new(date, action, description, amount, balance) {
+      this.date = date;
+      this.action = action;
+      this.description = description;
+      this.amount = amount;
+      this.balance = balance;
+   }
+   
+   override toString() {
+      "[${date}] ${action.name} - ${description} [${amount}] @ ${balance}";
+   }
+}

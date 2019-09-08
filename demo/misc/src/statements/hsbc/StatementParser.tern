@@ -1,0 +1,78 @@
+import util.stream.Collectors;
+import java.io.File;
+import java.io.IOException;
+import util.regex.Pattern;
+
+class StatementParser {
+   static const NEW_ITEM = "^(VIS|\\)\\)\\)|\\|\\|\\||DD|SO|ATM|CR|DR|TFR)\\s.*";
+   static const START_OF_NEW_DAY = "\\d+\\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\\s+\\d+.*";
+   static const START_DESCRIPTION = "(VIS|\\)\\)\\)|\\|\\|\\||DD|SO|ATM|CR|DR|TFR)\\s.*";
+   static const MONEY = "\\s*(\\d[0-9,]*\\.\\d\\d)\\s*";
+   static const MONEY_AND_BALANCE = MONEY + "\\s+" + MONEY;
+   
+   let entries = [];
+   let balance;
+   let date;
+   let lines = [];
+   
+   entries() {
+      return entries;
+   }
+   
+   update(const line) {
+      if(line.contains("BALANCE BROUGHT FORWARD")) {
+         return;
+      }
+      if(line.contains("BALANCE CARRIED FORWARD")) {
+         return;
+      }
+      if(line.matches("^\\d+\\s+\\w+\\s+to\\s+\\d+\\s+\\w+\\s+20\\d\\d.*")) {
+         return; 
+      }
+      const startLine = line.matches(NEW_ITEM) || line.matches(START_OF_NEW_DAY);
+      
+      if(startLine) {
+         dump();
+      }
+      if(line.matches(START_OF_NEW_DAY)) {
+         date = line.replaceAll(START_DESCRIPTION, "");
+         lines.add(line);
+      } else {
+         if(lines.length > 0) {
+            lines.add(line);
+            dumpIfMoney(line);
+         } else if(line.startsWith(")))") || line.startsWith("|||") ||line.matches(NEW_ITEM)) {
+            lines.add(date);
+            lines.add(line);
+            dumpIfMoney(line);
+         }
+      } 
+   }
+   
+   dumpIfMoney(line) {
+      if(line.matches(".*" + MONEY) || line.matches(".*" + MONEY_AND_BALANCE)) {
+         const matcher = Pattern.compile(".*" + MONEY_AND_BALANCE).matcher(line);
+         
+         if(matcher.matches()) {
+            balance = matcher.group(2);
+         }
+         dump();
+      }
+   }
+   
+   dump() {
+      if(!lines.isEmpty()) {
+         let line = lines.stream().collect(Collectors.joining(" ")).replace("  ", " ");
+         
+         if(line.matches(".*" + MONEY) || line.matches(".*" + MONEY_AND_BALANCE)) {
+            const matcher = Pattern.compile(".*" + MONEY_AND_BALANCE).matcher(line);
+            
+            if(matcher.matches()) {
+               balance = matcher.group(2);
+            }
+         }
+         entries.add(StatementLine(line, balance));
+      }
+      lines.clear();
+   }
+}

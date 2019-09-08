@@ -1,0 +1,10 @@
+import statements.hsbc.StatementParser;
+import statements.pdf.Pdf2Text;
+import statements.hsbc.StatementProcessor;
+
+const MAX = 500;
+
+StatementProcessor.process("C:\\Work\\docs\\HSBC\\personal_account_statements")
+   .stream()
+   .filter(item -> item.amount > MAX)
+   .forEach(this::println);

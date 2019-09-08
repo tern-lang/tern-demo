@@ -1,0 +1,112 @@
+import statements.pdf.Pdf2Text;
+import text.DecimalFormat;
+
+module StatementProcessor {
+
+   static const DATE = "(\\d+)\\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)\\s+(\\d+)";
+   static const ACTION = "(VIS|\\)\\)\\)|\\|\\|\\||DD|SO|ATM|CR|DR|TFR)";
+   static const MONEY = "(\\d[0-9,]*\\.\\d\\d)";
+   static const MONEY_AND_BALANCE = MONEY + "\\s+" + MONEY;
+   static const DESCRIPTION = "(.*)";
+
+   static const ODD_ITEM = DATE + "\\s+" + DESCRIPTION + "\\s*" + MONEY;
+   static const LONG_ITEM = DATE + "\\s+" + ACTION + "\\s+" + DESCRIPTION + "\\s+" + MONEY_AND_BALANCE;
+   static const SHORT_ITEM = DATE + "\\s+" + ACTION + "\\s+" + DESCRIPTION + "\\s+" + MONEY;
+   
+   const months = [
+      "jan",
+      "feb",
+      "mar",
+      "apr",
+      "may",
+      "jun",
+      "jul",
+      "aug",
+      "sep",
+      "oct",
+      "nov",
+      "dec"
+   ];
+
+   process(dir) {
+      const parser = StatementParser();
+      const list = File(dir).listFiles(file -> 
+         file.isDirectory() && 
+         file.name.matches("20\\d\\d"));
+         
+      list.stream().sorted().forEach(file -> {
+         for(month in months) {
+            const entry = File(file, month + ".pdf");
+            
+            if(entry.exists()) {
+               const tokens = Pdf2Text.read(entry.canonicalPath); 
+               
+               for(token in tokens) {
+                  parser.update(token.trim());
+               }
+            }
+         }
+      });
+      return parser.entries()
+         .stream()
+         .map(StatementProcessor::convert)
+         .collect(Collectors.toList());
+   }
+   
+   convert(line) {
+      const longMatcher = Pattern.compile(LONG_ITEM).matcher(line.line);
+      const shortMatcher = Pattern.compile(SHORT_ITEM).matcher(line.line);
+      const oddMatcher = Pattern.compile(ODD_ITEM).matcher(line.line);
+      const formatter = DecimalFormat("###,###,####,###.##");
+      
+      if(longMatcher.matches()) {
+         const day = longMatcher.group(1);
+         const month = longMatcher.group(2);
+         const year = longMatcher.group(3);
+         const action = longMatcher.group(4);
+         const description = longMatcher.group(5);
+         const amount = longMatcher.group(6);
+         const balance = longMatcher.group(7);
+         
+         if(balance != line.balance) {
+            System.err.println(line.line);
+         }
+         return Item(
+            "${day} ${month} ${year}", 
+            ItemAction.parse(action), 
+            description, 
+            formatter.parse(amount), 
+            formatter.parse(balance));
+      }
+      if(shortMatcher.matches()) {
+         const day = shortMatcher.group(1);
+         const month = shortMatcher.group(2);
+         const year = shortMatcher.group(3);
+         const action = shortMatcher.group(4);
+         const description = shortMatcher.group(5);
+         const amount = shortMatcher.group(6);
+         
+         return Item(
+            "${day} ${month} ${year}", 
+            ItemAction.parse(action), 
+            description, 
+            formatter.parse(amount), 
+            formatter.parse(line.balance));
+      }
+      if(oddMatcher.matches()) {
+         const day = oddMatcher.group(1);
+         const month = oddMatcher.group(2);
+         const year = oddMatcher.group(3);
+         const description = oddMatcher.group(4);
+         const balance = oddMatcher.group(5);
+         
+         return Item(
+            "${day} ${month} ${year}", 
+            ItemAction.UNKNOWN, 
+            description, 
+            0, 
+            formatter.parse(line.balance));
+      }      
+      throw IllegalStateException("Could not parse " + line.line);
+   }
+}

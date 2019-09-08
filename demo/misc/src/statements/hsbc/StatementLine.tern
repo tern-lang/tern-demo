@@ -1,0 +1,11 @@
+
+class StatementLine {
+
+   const line;
+   const balance;
+   
+   new(line, balance) {
+      this.line = line;
+      this.balance = balance;
+   }
+}

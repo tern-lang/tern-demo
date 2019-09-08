@@ -27,8 +27,8 @@ class Vec {
       return Math.sqrt(v.x * v.x + v.y * v.y + v.z * v.z); 
    }
    static norm(v) {
-      var mag = Vec.mag(v);
-      var div = (mag == 0) ? Double.POSITIVE_INFINITY : 1.0 / mag;
+      let mag = Vec.mag(v);
+      let div = (mag == 0) ? Double.POSITIVE_INFINITY : 1.0 / mag;
       return Vec.times(div, v);
    }
    static cross(v1, v2) {
@@ -62,7 +62,7 @@ class Color {
    static const background = new Color(0.0, 0.0, 0.0);
    static const defaultColor = new Color(0.0, 0.0, 0.0);
    static toDrawingColor(c) {
-      var legalize = (d) -> d > 1 ? 1 : d;
+      let legalize = (d) -> d > 1 ? 1 : d;
       return new ImageColor(
          Math.round(legalize(c.r) * 255),
          Math.round(legalize(c.g) * 255),
@@ -72,13 +72,13 @@ class Color {
 }
 
 class Camera {
-   var forward;
-   var right;
-   var up;
-   var pos;
+   let forward;
+   let right;
+   let up;
+   let pos;
    
    new(pos, lookAt) {
-      var down = new Vec(0.0, -1.0, 0.0);
+      let down = new Vec(0.0, -1.0, 0.0);
       this.pos = pos;
       this.forward = Vec.norm(Vec.minus(lookAt, pos));
       this.right = Vec.times(1.5, Vec.norm(Vec.cross(forward, down)));
@@ -87,8 +87,8 @@ class Camera {
 }
 
 class Ray {
-   var start;
-   var dir;
+   let start;
+   let dir;
    new(start, dir){
      this.start = start;
      this.dir = dir;
@@ -96,9 +96,9 @@ class Ray {
 }
 
 class Intersection {
-   var thing;
-   var ray;
-   var dist;
+   let thing;
+   let ray;
+   let dist;
    new(thing, ray, dist){
      this.thing = thing;
      this.ray = ray;
@@ -107,21 +107,21 @@ class Intersection {
 }
 
 abstract class Surface {
-   var roughness;
+   let roughness;
    abstract diffuse(pos);
    abstract specular(pos);
    abstract reflect(pos);
 }
 
 abstract class Thing {
-   var surface: Surface;
+   let surface: Surface;
    abstract intersect(ray);
    abstract normal(pos);
 }
 
 class Light {
-   var pos;
-   var color;
+   let pos;
+   let color;
    new(pos, color){
      this.pos = pos;
      this.color = color;
@@ -129,9 +129,9 @@ class Light {
 }
 
 class Scene {
-   var things;//[];
-   var lights;//: Light[];
-   var camera: Camera;
+   let things;//[];
+   let lights;//: Light[];
+   let camera: Camera;
    new(things, lights, camera: Camera) {
      this.things = things;
      this.lights = lights;
@@ -140,8 +140,8 @@ class Scene {
 }
 
 class Sphere extends Thing {
-   var radius2;
-   var center;
+   let radius2;
+   let center;
    new(center, radius, surface: Surface) {
       this.radius2 = radius * radius;
       this.center = center;
@@ -149,11 +149,11 @@ class Sphere extends Thing {
    }
    override normal(pos) { return Vec.norm(Vec.minus(pos, center)); }
    override intersect(ray) {
-      var eo = Vec.minus(center, ray.start);
-      var v = Vec.dot(eo, ray.dir);
-      var dist = 0;
+      let eo = Vec.minus(center, ray.start);
+      let v = Vec.dot(eo, ray.dir);
+      let dist = 0;
       if (v >= 0) {
-         var disc = radius2 - (Vec.dot(eo, eo) - v * v);
+         let disc = radius2 - (Vec.dot(eo, eo) - v * v);
          if (disc >= 0) {
             dist = v - Math.sqrt(disc);
          }
@@ -167,8 +167,8 @@ class Sphere extends Thing {
 }
 
 class Plane extends Thing {
-   var norm;
-   var offset;
+   let norm;
+   let offset;
    new(norm, offset, surface: Surface) {
       this.norm = norm;
       this.offset = offset;
@@ -176,11 +176,11 @@ class Plane extends Thing {
    }
    override normal(pos) { return norm; }
    override intersect(ray) {
-     var denom = Vec.dot(norm, ray.dir);
+     let denom = Vec.dot(norm, ray.dir);
      if (denom > 0) {
         return null;
      } else {
-        var dist = (Vec.dot(norm, ray.start) + offset) / (-denom);
+        let dist = (Vec.dot(norm, ray.start) + offset) / (-denom);
         return new Intersection(this, ray, dist);
      }
    }
@@ -219,13 +219,13 @@ class CheckerboardSurface extends Surface {
 
 
 class RayTracer {
-   var maxDepth = 5;
+   let maxDepth = 5;
 
    private intersections(ray, scene) {
-      var closest = Double.POSITIVE_INFINITY;
-      var closestInter = null;
-      for (var thing in scene.things) {
-         var inter = thing.intersect(ray);
+      let closest = Double.POSITIVE_INFINITY;
+      let closestInter = null;
+      for (let thing in scene.things) {
+         let inter = thing.intersect(ray);
          if (inter != null && inter.dist < closest) {
             closestInter = inter;
             closest = inter.dist;
@@ -235,7 +235,7 @@ class RayTracer {
    }
 
    private testRay(ray, scene) {
-      var isect = this.intersections(ray, scene);
+      let isect = this.intersections(ray, scene);
       if (isect != null) {
          return isect.dist;
       } else {
@@ -244,7 +244,7 @@ class RayTracer {
    }
 
    private traceRay(ray, scene, depth) {
-      var isect = this.intersections(ray, scene);
+      let isect = this.intersections(ray, scene);
       if (isect == null) {
          return Color.background;
       } else {
@@ -253,13 +253,13 @@ class RayTracer {
    }
 
    private shade(isect, scene, depth) {
-      var d = isect.ray.dir;
-      var pos = Vec.plus(Vec.times(isect.dist, d), isect.ray.start);
-      var normal = isect.thing.normal(pos);
-      var reflectDir = Vec.minus(d, Vec.times(2, Vec.times(Vec.dot(normal, d), normal)));
-      var naturalColor = Color.plus(Color.background,
+      let d = isect.ray.dir;
+      let pos = Vec.plus(Vec.times(isect.dist, d), isect.ray.start);
+      let normal = isect.thing.normal(pos);
+      let reflectDir = Vec.minus(d, Vec.times(2, Vec.times(Vec.dot(normal, d), normal)));
+      let naturalColor = Color.plus(Color.background,
                              this.getNaturalColor(isect.thing, pos, normal, reflectDir, scene));
-      var reflectedColor = (depth >= this.maxDepth) ? Color.grey : this.getReflectionColor(isect.thing, pos, normal, reflectDir, scene, depth);
+      let reflectedColor = (depth >= this.maxDepth) ? Color.grey : this.getReflectionColor(isect.thing, pos, normal, reflectDir, scene, depth);
       return Color.plus(naturalColor, reflectedColor);
    }
 
@@ -268,19 +268,19 @@ class RayTracer {
    }
 
    private getNaturalColor(thing, pos, norm, rd, scene) {
-      var addLight = (col, light) -> {
-         var ldis = Vec.minus(light.pos, pos);
-         var livec = Vec.norm(ldis);
-         var neatIsect = this.testRay(new Ray(pos, livec), scene);
-         var isInShadow = (neatIsect == null) ? false : (neatIsect <= Vec.mag(ldis));
+      let addLight = (col, light) -> {
+         let ldis = Vec.minus(light.pos, pos);
+         let livec = Vec.norm(ldis);
+         let neatIsect = this.testRay(new Ray(pos, livec), scene);
+         let isInShadow = (neatIsect == null) ? false : (neatIsect <= Vec.mag(ldis));
          if (isInShadow) {
             return col;
          } else {
-            var illum = Vec.dot(livec, norm);
-            var lcolor = (illum > 0) ? Color.scale(illum, light.color)
+            let illum = Vec.dot(livec, norm);
+            let lcolor = (illum > 0) ? Color.scale(illum, light.color)
                                 : Color.defaultColor;
-            var specular = Vec.dot(livec, Vec.norm(rd));
-            var scolor = (specular > 0) ? Color.scale(Math.pow(specular, thing.surface.roughness), light.color)
+            let specular = Vec.dot(livec, Vec.norm(rd));
+            let scolor = (specular > 0) ? Color.scale(Math.pow(specular, thing.surface.roughness), light.color)
                                 : Color.defaultColor;
             return Color.plus(col, Color.plus(Color.times(thing.surface.diffuse(pos), lcolor),
                                       Color.times(thing.surface.specular(pos), scolor)));
@@ -290,25 +290,25 @@ class RayTracer {
    }
    
    reduce(lights, addLight, color) { // scene.lights.reduce
-     var result = color;
-     for(var light in lights){
+     let result = color;
+     for(let light in lights){
        result = addLight(result, light);
      }
      return result;
    }
 
    render(scene, graphics, screenWidth, screenHeight) {
-      var getPoint = (x, y, camera) -> {
-         var recenterX = x ->(x - (screenWidth / 2.0)) / 2.0 / screenWidth;
-         var recenterY = y -> -1 * (y - (screenHeight / 2.0)) / 2.0 / screenHeight;
+      let getPoint = (x, y, camera) -> {
+         let recenterX = x ->(x - (screenWidth / 2.0)) / 2.0 / screenWidth;
+         let recenterY = y -> -1 * (y - (screenHeight / 2.0)) / 2.0 / screenHeight;
          return Vec.norm(Vec.plus(camera.forward, Vec.plus(Vec.times(recenterX(x), camera.right), Vec.times(recenterY(y), camera.up))));
       };
-      //for (var y = 0; y < screenHeight; y++) {
-      //   for (var x = 0; x < screenWidth; x++) {
-      for(var y in 0 .. screenHeight -1){
-         for(var x in 0 .. screenWidth -1){
-            var color = this.traceRay(new Ray(scene.camera.pos, getPoint(x, y, scene.camera)), scene, 0);
-            var rgb = Color.toDrawingColor(color);
+      //for (let y = 0; y < screenHeight; y++) {
+      //   for (let x = 0; x < screenWidth; x++) {
+      for(let y in 0 .. screenHeight -1){
+         for(let x in 0 .. screenWidth -1){
+            let color = this.traceRay(new Ray(scene.camera.pos, getPoint(x, y, scene.camera)), scene, 0);
+            let rgb = Color.toDrawingColor(color);
             
             graphics.setColor(rgb);
             graphics.fillRect(x, y, x + 1, y + 1);
@@ -318,7 +318,7 @@ class RayTracer {
 }
 
 
-function defaultScene(){
+func defaultScene(){
    return new Scene(
             [new Plane(new Vec(0.0, 1.0, 0.0), 0.0, new CheckerboardSurface()),
              new Sphere(new Vec(0.0, 1.0, -0.25), 1.0, new ShinySurface()),
@@ -333,17 +333,17 @@ function defaultScene(){
 // time for debug: 46931, 46477
 // time for run: 41837, 42174, 39594, 39501, 40236
 // time for new run: 24101, 23933
-function start(path) {
-   var rayTracer = new RayTracer();
-   var image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
-   var file = new File(path);
-   var graphics = image.getGraphics();
-   var scene = defaultScene();
+func start(path) {
+   let rayTracer = new RayTracer();
+   let image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+   let file = new File(path);
+   let graphics = image.getGraphics();
+   let scene = defaultScene();
    
    rayTracer.render(scene, graphics, 256, 256);
    ImageIO.write(image, "png", file);   
 }
 
-var start = System.currentTimeMillis();
+let start = System.currentTimeMillis();
 start("c:\\Work\\temp\\raytrace.png");
 println(System.currentTimeMillis()-start);

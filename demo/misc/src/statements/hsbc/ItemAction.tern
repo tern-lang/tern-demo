@@ -1,0 +1,29 @@
+
+enum ItemAction {
+   VISA("VIS"),
+   NONE(")))", "|||"),
+   DIRECT_DEBIT("DD"),
+   STANDING_ORDER("SO"),
+   ATM("ATM"),
+   CREDIT("CR"),
+   DEBIT("DR"),
+   TRANSFER("TFR"),
+   UNKNOWN("???");
+   
+   const matches;
+   
+   new(matches...) {
+      this.matches = matches;
+   }
+   
+   static parse(token): ItemAction {
+      for(value in ItemAction.values) {
+         for(text in value.matches) {
+            if(text == token.trim) {
+               return value;
+            }
+         }
+      }
+      throw IllegalArgumentException("Could not match '${token}'");
+   }
+}
