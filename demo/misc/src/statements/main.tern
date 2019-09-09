@@ -1,10 +1,10 @@
-import statements.hsbc.StatementParser;
-import statements.pdf.Pdf2Text;
-import statements.hsbc.StatementProcessor;
+import statements.hsbc.{ItemAction, StatementProcessor};
 
-const MAX = 500;
+const file = FileWriter("C:\\Work\\docs\\HSBC\\personal_account_statements\\all.csv");
+const writer = PrintWriter(file);
 
 StatementProcessor.process("C:\\Work\\docs\\HSBC\\personal_account_statements")
    .stream()
-   .filter(item -> item.amount > MAX)
-   .forEach(this::println);
+   .forEach(item -> writer.println("${item.date},${item.action.name},${item.description.replace(',', ' ')},${item.amount},${item.balance}"));
+
+writer.close();   

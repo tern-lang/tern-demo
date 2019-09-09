@@ -1,15 +1,11 @@
 
 for(i in 0 to 10000) {
-   try {
-      roundTrip(i);
-   } catch(e) {
-      e.printStackTrace();
-   }
+   roundTrip(i);
 }
 
 func roundTrip(count) {
-   let url = "https://apigw.exchange-demo-test.hydra-dev.weareadaptive.com/instrument/spot-instruments/all";
-   let creds = Base64.getEncoder().encodeToString("admin1:password12".getBytes());
+   let url = "http://localhost:9797/instrument/spot-instruments/all";
+   let creds = Base64.getEncoder().encodeToString("admin:password12".getBytes());
    let response = URL(url)   
       .header("Authorization", "Basic " + creds)
       .header("Accept", "*/*")
