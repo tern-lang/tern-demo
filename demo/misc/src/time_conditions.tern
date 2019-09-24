@@ -1,16 +1,9 @@
 function time(name, func){
-   Thread(-> {
-      //println(Thread.currentThread().name);
-      var s = System.currentTimeMillis();
-      func();
-      var f = System.currentTimeMillis();
-      println(name +": "+(f-s));
-      try{
-         func.blah();
-      } catch(e){
-         e.printStackTrace();
-      }
-   }).start();
+   //println(Thread.currentThread().name);
+   var s = System.currentTimeMillis();
+   func();
+   var f = System.currentTimeMillis();
+   println(name +": "+(f-s));
 }
 
 const ITERATIONS = 10000000;

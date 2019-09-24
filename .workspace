@@ -1,4 +1,19 @@
 <workspace>
+  <process secure="false">
+    <time-limit>120000</time-limit>
+    <security-policy>
+      <grant permission="java.lang.reflect.ReflectPermission" subject="suppressAccessChecks"/>  
+      <grant permission="java.net.SocketPermission" subject="localhost">connect, accept, resolve</grant>
+      <grant permission="java.net.URLPermission" subject="http:*">*</grant>
+      <grant permission="java.lang.RuntimePermission">*</grant> 
+      <grant permission="java.util.PropertyPermission" subject="*">read, write</grant>
+      <grant permission="java.io.FilePermission" subject="c:\-">read</grant>
+      <grant permission="java.io.FilePermission" subject="c:\*">read</grant>  
+      <!--grant permission="java.io.FilePermission" subject="${user.home}\.tern\temp\.">read</grant>  
+      <grant permission="java.io.FilePermission" subject="${user.home}\.tern\temp\-">read, write, delete</grant>  
+      <grant permission="java.io.FilePermission" subject="${java.io.tmpdir}\-">read, write, delete</grant-->  
+    </security-policy>
+  </process>
   <environment>
     <variable name="PROJECT_ROOT">C:\Work\development\tern-lang\tern-demo</variable>
   </environment>

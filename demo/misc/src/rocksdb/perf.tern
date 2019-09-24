@@ -1,0 +1,59 @@
+import org.rocksdb.RocksDB;
+import org.rocksdb.Options;
+import org.rocksdb.RocksIterator;
+import nio.charset.StandardCharsets;
+
+RocksDB.loadLibrary();
+testReadPerf();
+
+func testReadPerf() {
+   try {
+      const opts = Options().setCreateIfMissing(false);
+      const db: RocksDB = RocksDB.open(opts, "c:/Work/temp/rocks.db");
+      
+      timeIt(-> {
+         const it: RocksIterator = db.newIterator();
+         it.seekToFirst();
+         
+         while(it.isValid()) {
+            const key = String(it.key, StandardCharsets.UTF_8);
+            const val = String(it.value, StandardCharsets.UTF_8);
+            
+            // println("${key}=${val}");
+            it.next();
+         }
+      }, "1000 ops");
+      
+      db.close();
+   } catch(e) {
+      e.printStackTrace();
+   } 
+}
+
+
+func testWritePerf() {
+   try {
+      const opts = Options().setCreateIfMissing(true);
+      const db: RocksDB = RocksDB.open(opts, "c:/Work/temp/rocks.db");
+      
+      timeIt(-> {
+         for(i in 1000 to 100000) {
+            const k = "key-${i}".getBytes();
+            const v = "value-${i}".getBytes();
+            
+            db.put(k, v);
+         }
+      }, "1000 ops");
+      
+      db.close();
+   } catch(e) {
+      e.printStackTrace();
+   } 
+}
+
+func timeIt(op, message){
+   const start = System.currentTimeMillis();
+   op();
+   const finish = System.currentTimeMillis();
+   println("${message}: "+(finish - start));
+}
