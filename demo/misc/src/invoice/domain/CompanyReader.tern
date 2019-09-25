@@ -1,0 +1,59 @@
+
+module CompanyReader {
+
+   /*
+   {
+      "bankAccount": {
+         "accountName": "Account Name",
+         "accountNumber": "Account Number",
+         "sortCode": "11-22-33"
+      }, 
+      "agent": {
+         "agentAddress": "Agent\nAddress\nGoes\nHere",
+         "emailAddress": "agent@adress.com"
+      }, 
+      "accounts": {
+         "dailyRate": 111,
+         "vat": 0.20
+      },
+      "companyName": "Company Name",
+      "companyAddress": "Company\nAddress\nGoes\nHere", 
+      "phoneNumber": "11111",
+      "registrationNumber": "1111",
+      "vatNumber": "1111"
+   }
+    */
+   readCompany(path) {
+      let file = File(path);
+      
+      try {
+         let text = file.readText();
+         let map = eval(text);
+         let bankAccount = BankAccount(
+            map.bankAccount.accountName,
+            map.bankAccount.accountNumber,
+            map.bankAccount.sortCode);
+         
+         let agent = Agent(
+            map.agent.agentAddress,
+            map.agent.emailAddress);
+            
+         let account = Account(
+            map.accounts.dailyRate,
+            map.accounts.vat);
+            
+         return Company(
+            map.companyName,
+            map.companyAddress,
+            map.phoneNumber,
+            map.registrationNumber, 
+            map.vatNumber,
+            bankAccount,
+            agent,
+            account);
+      }catch(e) {
+         e.printStackTrace();
+         throw new IllegalStateException("Could not read company info", e);
+      }
+   }
+}

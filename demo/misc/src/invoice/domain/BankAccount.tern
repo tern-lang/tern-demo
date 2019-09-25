@@ -1,0 +1,11 @@
+class BankAccount {
+   const accountName;
+   const accountNumber;
+   const sortCode;
+   
+   new(accountName, accountNumber, sortCode){
+      this.accountName = accountName;
+      this.accountNumber = accountNumber;
+      this.sortCode = sortCode;
+   }
+}

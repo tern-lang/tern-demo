@@ -1,0 +1,48 @@
+class TimeSheet {
+
+   static const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Oct", "Nov", "Dec"];
+
+   const weeks: List<Week>;
+   const year;
+   const month;
+   
+   new(month, year, weeks: List<Week>) {
+      this.weeks = weeks;
+      this.month = month;
+      this.year = year;
+   }
+   
+   getInvoiceNumber() {
+      return "${month <= 9 ? '0' : ''}${month}${year}"; 
+   }
+   
+   getDescription() {
+      return "${MONTHS[month-1]} ${year}";
+   }
+   
+   getDate() {
+      return "${MONTHS[month-1]}-${year}";
+   }
+   
+   calculateDays() {
+      let count = 0;
+      
+      for(week in weeks) {
+         count += week.calculateDays();
+      }
+      return count;
+   }
+   
+   calculateHours() {
+      let count = 0;
+      
+      for(week in weeks) {
+         count += week.calculateHours();
+      }
+      return count;
+   }
+   
+   override toString() {
+      return "${MONTHS[month-1]}-${weeks}";
+   }
+}

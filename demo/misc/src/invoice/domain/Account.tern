@@ -1,0 +1,25 @@
+class Account{
+   const dailyRate;
+   const vat;
+   
+   new(dailyRate, vat) {
+      this.dailyRate = dailyRate;
+      this.vat = vat;
+   }
+   
+   formatVat() {
+      return Math.round(100* vat) + "%";
+   }
+   
+   calculateGross(daysWorked) {
+      return calculateNet(daysWorked) + calculateVat(daysWorked);
+   }
+   
+   calculateNet(daysWorked) {
+      return daysWorked * dailyRate;
+   }
+   
+   calculateVat(daysWorked) {
+      return calculateNet(daysWorked) * vat;
+   }
+}

@@ -1,0 +1,24 @@
+class Day {
+
+   const month;
+   const name;
+   const dayOfMonth;
+   const year;
+   const hours;
+   
+   new(name, dayOfMonth, month, year, hours) {
+      this.name = name;
+      this.dayOfMonth = dayOfMonth;
+      this.month = month;
+      this.year = year;
+      this.hours = hours;
+   }
+   
+   getDate() {
+      return "${dayOfMonth}/${month}/${year}";
+   }
+   
+   override toString() {
+      return "${name} ${dayOfMonth}/${month}/${year} -> ${hours}";
+   }
+}

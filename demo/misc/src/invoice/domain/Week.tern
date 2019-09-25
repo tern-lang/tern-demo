@@ -1,0 +1,37 @@
+class Week {
+   const date;
+   const days;
+   const month;
+   const year;
+   
+   new(date, month, year, days) {
+      this.date = date;
+      this.month = month;
+      this.year = year;
+      this.days = days;
+   }
+   
+   calculateDays() {
+     let count = 0;
+   
+      for(let day in days) {
+         if(day.hours != 0) {
+            count++;
+         }
+      }
+      return count;
+   }
+   
+   calculateHours() {
+     let count = 0;
+   
+      for(let day in days) {
+         count += day.hours;
+      }
+      return count;
+   }   
+   
+   override toString() {
+      return "${date}: ${days}";
+   }
+}

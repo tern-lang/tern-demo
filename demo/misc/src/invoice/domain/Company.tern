@@ -1,0 +1,21 @@
+class Company {
+   const companyName;
+   const companyAddress;
+   const phoneNumber;
+   const registrationNumber;
+   const vatNumber;
+   const bankAccount;
+   const agent;
+   const account;
+   
+   new(companyName, companyAddress, phoneNumber, registrationNumber, vatNumber, bankAccount, agent, account){
+      this.companyName = companyName;
+      this.registrationNumber = registrationNumber;
+      this.vatNumber = vatNumber;
+      this.bankAccount = bankAccount;
+      this.phoneNumber = phoneNumber;
+      this.companyAddress = companyAddress;
+      this.agent = agent;
+      this.account = account;
+   }
+}

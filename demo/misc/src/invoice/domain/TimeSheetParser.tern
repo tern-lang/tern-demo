@@ -1,0 +1,129 @@
+import static util.Calendar.*;
+import text.SimpleDateFormat;
+
+module TimeSheetParser {
+   
+   const DAYS = [
+   	"Monday", 
+   	"Tuesday", 
+   	"Wednesday", 
+   	"Thursday", 
+   	"Friday", 
+   	"Saturday", 
+   	"Sunday"];
+   
+   const CALENDAR_DAYS = {
+   	MONDAY: "Monday", 
+   	TUESDAY: "Tuesday", 
+   	WEDNESDAY: "Wednesday", 
+   	THURSDAY: "Thursday", 
+   	FRIDAY: "Friday", 
+   	SATURDAY: "Saturday", 
+   	SUNDAY: "Sunday"};
+   
+   parse(file: String): List<TimeSheet> {
+      const lines = File(file).readLines();
+      const format = SimpleDateFormat("dd/MM/yyyy");
+      const calendar = Calendar.getInstance();
+      const days = [];
+      
+      for(let i = 0; i < lines.length; i++) {
+         const list = lines[i].split(",");         
+         const date = format.parse(list[0]); // format is being accepted from a scope outside of this function         
+         
+         calendar.setTime(date);
+         
+         if(calendar.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) { // make sure we end on sunday
+            throw new IllegalArgumentException("The date " + list[0] + " is not a valid week ending");
+         }
+         calendar.add(Calendar.DATE, -6); // go back to first day of week
+         assert calendar.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY; // make sure we end on sunday         
+         
+         for(let j in 0 to list.length -3) {
+            const name = DAYS[j];
+            const month = calendar.get(Calendar.MONTH) + 1;
+            const dayOfMonth = calendar.get(Calendar.DAY_OF_MONTH);
+            const year = calendar.get(Calendar.YEAR);
+            const hours = list.length < j + 1 ? 0 : Double.parseDouble(list[j+1]);
+            const day = Day(name, dayOfMonth, month, year, hours);
+            
+            days.add(day);
+            calendar.add(Calendar.DATE, 1);
+         }
+      }   
+      return create(days);
+   }
+   
+   create(days: List<Day>): List<TimeSheet> {
+      let queue = LinkedList(days);
+      let timeSheets = [];
+      
+      while(!queue.isEmpty()) {
+         let month = consumeMonth(queue);
+         
+         if(month.length > 0) {
+            let firstWeek = month[0];
+            let monthOfYear = firstWeek.month;
+            let year = firstWeek.year;
+            let timeSheet = TimeSheet(monthOfYear, year, month);
+            
+            timeSheets.add(timeSheet);
+         }
+      }
+      return Collections.unmodifiableList(timeSheets);
+   }
+   
+   consumeMonth(days: Queue<Day>): List<Week> {
+      let month: List<Week> = [];
+      let prev = null;
+      
+      while(!days.isEmpty()) {
+         let day = days.peek();
+         
+         if(prev != null && prev.month != day.month) {
+            break;
+         } 
+         let daysOfWeek = consumeWeek(days);
+         
+         if(daysOfWeek.length > 0) {
+            let lastDay = daysOfWeek[daysOfWeek.length -1];
+            let date = lastDay.date;
+            let monthOfYear = lastDay.month;
+            let year = lastDay.year;
+            let week = Week(date, monthOfYear, year, daysOfWeek);
+            
+            month.add(week);
+         }
+         prev = day;
+      }
+      return month;
+   }
+   
+   consumeWeek(days: Queue<Day>): List<Day> {
+      let week: List<Day> = [];
+      let done = {};
+      let prev = null;
+      
+      while(!days.isEmpty()){ 
+         let day = days.peek();
+         
+         if(!done.add(day.name)) {
+            break;
+         }
+         if(day.name.equals(DAYS[0]) && !week.isEmpty()) {
+            break;
+         }
+         if(prev == null) {
+            week.add(day);
+         } else {
+            if(prev.month != day.month) {
+               break;
+            }
+            week.add(day);
+         }
+         days.poll();
+         prev = day;
+      }
+      return week;
+   }
+}

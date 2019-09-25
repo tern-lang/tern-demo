@@ -1,0 +1,9 @@
+class Agent {
+   const agentAddress;
+   const emailAddress;
+   
+   new(agentAddress, emailAddress){
+      this.agentAddress = agentAddress;
+      this.emailAddress = emailAddress;
+   }
+}
