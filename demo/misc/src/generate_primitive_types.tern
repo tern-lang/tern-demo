@@ -1,0 +1,50 @@
+import util.stream.Collectors;
+
+class Primitive {
+   const java;
+   const name;
+   const size;
+   
+   new(java, name, size) {
+      this.java = java;
+      this.name = name;
+      this.size = size;
+   }
+}
+
+const types = [
+   Primitive("int", "Int", "INT_SIZE"),
+   Primitive("long", "Long", "LONG_SIZE"),
+   Primitive("short", "Short", "SHORT_SIZE"),
+   Primitive("byte", "Byte", "BYTE_SIZE"),
+   Primitive("boolean", "Bool", "BOOL_SIZE"),
+   Primitive("double", "Double", "DOUBLE_SIZE"),
+   Primitive("float", "Float", "FLOAT_SIZE")];
+   
+const path = "C:\\Work\\development\\tern-lang\\tern-message\\tern-message\\src\\main\\java\\org\\ternlang\\message\\primitive";  
+const file = File(path);
+
+if(!file.exists) {
+   throw new IllegalStateException("Could not find path");
+}
+const files = File(path).findFiles("Char.*.java")
+   .stream()
+   .collect(Collectors.toList());
+
+files.forEach(file -> {
+   if(file.name == "CharCodec.java" || file.name == "CharBuilder.java") {
+      const text = file.readText();
+      
+      for(t in types) {
+         const newFile = file.canonicalPath.replace("Char", t.name);
+         const newText = text.replaceAll("char", t.java).replaceAll("Char", t.name).replace("CHAR_SIZE", t.size);
+         
+         println(newFile);
+         File(newFile).writeText(newText);
+      }
+   }
+});
+
+   
+
+
