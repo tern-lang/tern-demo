@@ -1,0 +1,50 @@
+
+const domain = [
+   {
+      "id": "login",
+      "command": "loginCommand",
+      "name": "LoginCommand",
+      "description": "Authentication command",
+      "summary": "User authenticates with ESG"
+   }
+];
+
+components(domain);
+println("\n\n");
+schemas(domain);
+
+func components(domain) {
+   for(entity in domain) {
+   println(`components:
+  messages:
+    ${entity.command}:
+      name: ${entity.name}
+      title: ${entity.description}
+      summary: ${entity.summary}
+      contentType: application/json
+      payload:
+        $ref: "#/components/schemas/${entity.command}"`);
+   }
+}
+
+
+func schemas(domain) {
+   for(entity in domain) {
+      println(` schemas:
+   ${entity.command}:
+      type: object
+      properties:
+       type:
+          type: string
+          default: "${entity.id}"
+          description: Classification of message.
+       payload:
+          $ref: "#/components/schemas/${entity.command}Payload"
+    ${entity.command}Payload:
+      type: object
+      properties:
+       login:
+          type: string
+          description: Username to authenticate with.`);
+   }
+}

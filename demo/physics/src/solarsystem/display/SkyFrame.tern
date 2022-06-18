@@ -1,33 +1,9 @@
 
-import awt.BasicStroke;
-import awt.BorderLayout;
-import awt.Color;
-import awt.Container;
-import awt.Graphics;
-import awt.Graphics2D;
-import awt.event.ActionEvent;
-import awt.event.ActionListener;
-import awt.geom.AffineTransform;
-import awt.geom.Area;
-import awt.geom.Ellipse2D;
-import awt.geom.GeneralPath;
-import awt.geom.Line2D;
-import awt.geom.Rectangle2D;
-import util.Vector;
-
-import swing.JButton;
-import swing.JFrame;
-import swing.JPanel;
-import swing.JSlider;
-import swing.event.ChangeEvent;
-import swing.event.ChangeListener;
-
-import solarsystem.model.Host;
-import solarsystem.model.Satellite;
-import solarsystem.model.Planet;
-import solarsystem.model.Moon;
-import solarsystem.model.Stars;
-import solarsystem.model.Sun;
+import awt.{BorderLayout, Color};
+import awt.event.{ActionEvent, ActionListener};
+import solarsystem.model.{Planet, Sun};
+import swing.{JButton, JFrame, JPanel, JSlider};
+import swing.event.{ChangeEvent, ChangeListener};
 
 /**
  * This class provides the frame that contains the GUI interface and the

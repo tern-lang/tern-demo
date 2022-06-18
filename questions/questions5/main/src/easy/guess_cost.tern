@@ -1,0 +1,24 @@
+println(getMoneyAmount(6));
+
+func getMoneyAmount(n) {
+  return search(1, n, n, 0);
+}
+
+func search(low, high, n, cost) {
+ if(low == high) {
+     return cost;
+ }
+ let count = high - low;
+ 
+ if(count <= 2) {
+    println(low + " cost=" + cost); 
+    return cost + low;
+ }
+ let mid = low + ((high - low) / 2);
+  
+ if(mid != n) {
+     println("high=${high} low=${low} mid=${mid} cost=${cost}");
+     return search(mid + 1, high, n, cost + low);
+ }
+ return cost;
+}

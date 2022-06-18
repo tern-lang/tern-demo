@@ -1,0 +1,52 @@
+// https://leetcode.com/problems/longest-substring-with-at-most-k-distinct-characters/solution/
+
+assert lengthOfLongestSubstringKDistinct("aabbbcc", 2) == 5;
+// assert lengthOfLongestSubstringKDistinct("aabbcc", 2) == 4;
+// assert lengthOfLongestSubstringKDistinct("aabbcc", 3) == 6;
+// assert lengthOfLongestSubstringKDistinct("eceba", 2) == 3;
+// assert lengthOfLongestSubstringKDistinct("aa", 1) == 2;
+
+func lengthOfLongestSubstringKDistinct(s: String, k: Integer) {
+   let chars = {:};
+   let head = 0; // left to right
+   let tail = 0;
+   let max = 0; // max length of substring
+   let curr = 0; // cur length of substring
+   
+   while(head < s.length) {
+      let headNext = s.charAt(head++);
+      let headCount = chars.containsKey(headNext) ? curr : curr + 1;
+              
+      println(`chars=${chars} curr=${curr}`);
+      sleep(1000);              
+               
+      if(headCount <= k) {
+         let v = chars.get(headNext);
+         
+         if(v == null || v == 0) {
+           chars.put(headNext, 1); // add a count to the char
+         } else {
+           chars.put(headNext, v + 1);
+         }
+         curr++;
+         max = Math.max(max, curr);
+      } else {
+         while(tail < head) {
+            let tailNext = s.charAt(tail);
+            let tailCount = chars.get(tailNext);
+            
+            tail++;
+                           
+            if(tailCount == 1) {
+               chars.put(tailNext, 0);
+               curr--; // we have removed one character, so reduce length
+               break;
+            } else if(tailCount > 0) {
+               chars.put(tailNext, tailCount - 1);
+            }
+         }
+      }
+   }
+   println(s + ": "+max);
+   return max;
+}

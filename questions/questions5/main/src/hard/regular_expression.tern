@@ -1,0 +1,39 @@
+// https://leetcode.com/problems/regular-expression-matching/
+
+func isMatch(s, p) {
+}
+
+/*
+class Solution {
+    public boolean isMatch(String s, String p) {
+        if(s.equals(p)) {
+            return true;
+        }
+        int pIndex = 0;
+        int sIndex = 0;
+        
+        while(pIndex < p.length() && sIndex < s.length()) {
+            char pNext = p.charAt(pIndex); // *b
+            char sNext = s.charAt(sIndex); // bcd
+            
+            if(pNext == '*') {
+                String pSub = p.substring(++pIndex); // a*b -> b
+                
+                while(sIndex < s.length()) { // scan along the substring until we match
+                    String sSub = s.substring(sIndex); // abcd -> bcd
+                    
+                    if(isMatch(sSub, pSub)) {
+                        return true; // match fully explored
+                    }  
+                    sIndex++;
+                }
+                break;
+            } else if(pNext != '.' && pNext != sNext) {
+                return false;
+            }
+            pIndex++;
+            sIndex++;
+        } 
+        return pIndex == p.length() && sIndex == s.length(); // watch for terminal length
+    }
+}*/

@@ -1,6 +1,6 @@
 import invoice.domain.{CompanyReader, Invoice, TimeSheetParser};
 
-const INVOICE_PATH = "/home/niall/Work/invoices";
+const INVOICE_PATH = "C:/Work/docs/zuooh/adaptive/invoices";
 
 /*
 13/01/2017,8,8,8,8,8,40.00

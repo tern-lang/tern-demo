@@ -1,27 +1,30 @@
 <workspace>
-  <process secure="true">
+  <environment>
+    <variable name="PROJECT_ROOT">C:/Work/development/tern-lang/tern-demo</variable>
+    <variable name="REPO_PATH">${java.io.tmpdir}/test-repo</variable>
+  </environment>
+  <process secure="false">
     <time-limit>120000</time-limit>
     <security-policy>
-      <grant permission="java.lang.reflect.ReflectPermission" subject="suppressAccessChecks"/>  
+      <grant permission="java.lang.reflect.ReflectPermission" subject="suppressAccessChecks" />
       <grant permission="java.net.SocketPermission" subject="localhost">connect, accept, resolve</grant>
       <grant permission="java.net.URLPermission" subject="http:*">*</grant>
-      <grant permission="java.lang.RuntimePermission">*</grant> 
+      <grant permission="java.lang.RuntimePermission">*</grant>
       <grant permission="java.util.PropertyPermission" subject="*">read, write</grant>
-      <grant permission="java.io.FilePermission" subject="/tmp/test-repo/-">read</grant>  
-      <grant permission="java.io.FilePermission" subject="${user.home}\.tern\-">read, write, delete</grant>  
-      <grant permission="java.io.FilePermission" subject="${java.io.tmpdir}\-">read, write, delete</grant>  
+      <grant permission="java.io.FilePermission" subject="${REPO_PATH}/-">read</grant>
+      <grant permission="java.io.FilePermission" subject="${user.home}/.tern/-">read</grant>
+      <grant permission="java.io.FilePermission" subject="${user.home}/.tern/run/*">read, write, delete</grant>
+      <grant permission="java.io.FilePermission" subject="${java.io.tmpdir}/-">read, write, delete</grant>
+      <grant permission="java.io.FilePermission" subject="c:/Work/development/tern-lang/-">read, write</grant>
     </security-policy>
   </process>
-  <environment>
-    <variable name="PROJECT_ROOT">C:\Work\development\tern-lang\tern-demo</variable>
-  </environment>
   <arguments>
     <argument>-Xmx100m</argument>
     <argument>-Xms100m</argument>
     <argument>-XX:+UnlockCommercialFeatures</argument>
     <argument>-XX:+FlightRecorder</argument>
   </arguments>
-  <repository path="/tmp/test-repo">
+  <repository path="${REPO_PATH}">
     <location name="central">http://repo1.maven.org/maven2</location>
   </repository>
 </workspace>

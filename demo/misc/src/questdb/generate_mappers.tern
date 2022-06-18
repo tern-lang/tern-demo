@@ -1,0 +1,126 @@
+import util.regex.Pattern;
+
+func gen(code) {
+   let lines = code.split("\\r?\\n");
+   let list = [];
+   for(line in lines) {
+      line = line.trim();
+      if(line.endsWith("();")) {
+         let m = Pattern.compile("(\\w+)\\s+(\\w+)\\(\\);").matcher(line);
+         if(m.matches()) {
+            let name = m.group(2);
+            let typ = m.group(1);
+            let snake = "";
+            
+            for(c in name.toCharArray()) {
+               if(Character.isUpperCase(c)) {
+                  snake += "_" + c;
+               } else {
+                  snake += c;
+               }
+            }
+            
+            list.add({
+               'name': name,
+               'snake': snake,
+               'typ': typ
+            });
+           
+         }
+      }
+   }
+   genTypes("CurrencyEvent", "currency().", list);
+   genFields(list);
+   genDef(list);
+}
+
+func genTypes(name, field, list) {
+   list.forEach(e -> {
+   let cls = "";
+   
+   
+   
+   println(`   
+   private static final class ${Character.toUpperCase(e.name.charAt(0)) + e.name.substring(1)}Extractor implements Schema.${map(e.typ)}Reader<${name}> {
+    
+      @Override
+      public ${e.typ} read(${name} event) {
+         return event.${field}${e.name}();
+      }
+   }`);
+   });
+}
+
+func map(typ) {
+      if(typ.equals("CharArray") || typ.equals("CharSequence"))  {
+         return "String";
+      } else if(["long", "short", "byte", "float", "double", "Decimal"].contains(typ)) {
+         return "${Character.toUpperCase(typ.charAt(0)) + typ.substring(1)}";
+      } else if(typ.equals("int")) {
+        return "Integer";
+      } else {
+         return "Enum";
+      }
+}
+
+func genDef(list) {
+   list.forEach(e -> {
+      println(`      schema.add${map(e.typ)}(${e.snake.toUpperCase()}, new ${Character.toUpperCase(e.name.charAt(0)) + e.name.substring(1)}Extractor());`);
+   });
+}
+
+func genFields(list) {
+   list.forEach(e -> {
+      println(`   public static final String ${e.snake.toUpperCase()} = \"${e.snake.toLowerCase()}\";`);
+   });
+}
+
+
+let src = `
+   Asset asset();
+
+   /**
+    * Get option for block.
+    * @returns option for block
+    */
+   CharArrayOption description();
+
+   /**
+    * Get value for height.
+    * @returns value for height
+    */
+   long height();
+
+   /**
+    * Get value for prune.
+    * @returns value for prune
+    */
+   int prune();
+
+   /**
+    * Get value for status.
+    * @returns value for status
+    */
+   BlockStatus status();
+
+   /**
+    * Get value for time.
+    * @returns value for time
+    */
+   long time();
+
+   /**
+    * Get value for id.
+    * @returns value for id
+    */
+   int id();
+
+   /**
+    * Get value for timeStamp.
+    * @returns value for timeStamp
+    */
+   long timeStamp();
+
+`;
+
+gen(src);

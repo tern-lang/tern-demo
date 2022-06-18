@@ -33,7 +33,7 @@ func rewritePrefixFiles(directory, fromPrefixes, toPrefix, test) {
 
 func rewritePackageFiles(directory, fromPackage, toPackage, test) {
    File(directory)
-      .findFiles(f -> f.getName().endsWith(".java") || f.getName().endsWith("pom.xml"))
+      .findFiles(f -> f.getName().endsWith(".java") || f.getName().endsWith("pom.xml") || f.getName().endsWith(".idl"))
       .stream()
       .forEach(f -> {
          try {
@@ -118,10 +118,10 @@ func renameDirs(directory, fromPackage, toPackage, test) {
       });
 }
 
-performRefactor("C:\\Work\\development\\tern-lang\\tern-android", 
-   "org.snapscript",
+performRefactor("C:\\Work\\development\\eirex\\eirex-core", 
    "org.ternlang",
-   ["snap-"],
-   "tern-",
+   "com.eirex",
+   ["tern-"],
+   "eirex-",
    false);
 

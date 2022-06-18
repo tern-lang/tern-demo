@@ -1,0 +1,203 @@
+// https://leetcode.com/problems/longest-increasing-path-in-a-matrix/
+
+// Below is the correct answer, sort of. Its actually doing more than
+// the question asked by not repeating a path. But the method of 
+// solving is correct.
+
+assert longestIncreasingPath([[9,9,4],[6,6,8],[2,1,1]]) == 4;
+
+func longestIncreasingPath(matrix) {
+   let m = new Matrix(matrix);
+   let max = 0;
+   
+   for(let y = 0; y < matrix.length; y++) {
+      for(let x = 0; x < matrix[y].length; x++) {
+        max = Math.max(max, calcMaxPath(new Move(m, x, y, {})));
+      }
+   }
+   return max;
+}
+
+func calcMaxPath(move: Move) {
+   return calcMaxPath(move, 1);
+}
+
+func calcMaxPath(move: Move, steps: Integer) {
+   let newMoves = move.moves();
+   let max = steps;
+   
+   for(let newMove in newMoves) {
+      max = Math.max(max, calcMaxPath(newMove, steps+1));
+   }
+   return max;
+}
+
+class Move {
+
+   private matrix: Matrix;
+   private steps: Set;
+   private x;
+   private y;
+   
+   new(matrix: Matrix, x, y, steps) {
+      this.steps = new HashSet(steps);
+      this.matrix = matrix;
+      this.x = x;
+      this.y = y;
+      
+      steps.add(x + ":" + y);
+      println(steps);
+   }
+   
+   public moves(): List<Move> {
+      let moves = [];
+      
+      move(moves, x + 1, y);
+      move(moves, x - 1, y);
+      move(moves, x, y + 1);
+      move(moves, x, y - 1);
+      
+      println(moves);
+      return moves;
+   }
+   
+   private move(moves, x, y) {
+      if(matrix.accept(x,y) && steps.add(x + ":" + y)) {
+         if(matrix.get(x, y) > matrix.get(this.x, this.y)) {
+            moves.add(new Move(matrix, x, y, steps));
+         }
+      }
+   }
+}
+
+class Matrix {
+
+   private matrix;
+   
+   new(matrix) {
+      this.matrix = matrix;
+   }
+   
+   get(x, y) {
+     if(accept(x, y)) {
+        return matrix[y][x];
+     }
+     return null;
+   }
+   
+   accept(x, y) {
+      if(x >= matrix[0].length || x < 0) {
+         return false;
+      }
+      if(y >= matrix.length || y < 0) {
+         return false;
+      }
+      return true;
+   }
+}
+
+
+/*
+class Solution {
+    public int longestIncreasingPath(int[][] matrix) {
+        Matrix m = new Matrix(matrix);
+        Set<Move> path = new HashSet<>();
+        int max = 0;
+        
+        for(int i = 0; i < matrix.length; i++) {
+            for(int j = 0; j < matrix[i].length; j++) {
+                Move start = new Move(m, j, i);
+                
+                path.add(start);
+                max = Math.max(max, calcMaxPath(start, path));
+                path.clear();
+            }
+        }
+        return max;
+    }
+    
+    private int calcMaxPath(Move move, Set<Move> path) {
+        List<Move> newMoves = move.moves(path);
+        int max = path.size();
+        
+        for(Move newMove : newMoves) {
+           path.add(newMove);
+           max = Math.max(max, calcMaxPath(newMove, path));
+           path.remove(newMove);
+        }
+        return max;
+    }
+    
+    private static class Matrix {
+       private int[][] matrix;
+        
+        public Matrix(int[][] matrix) {
+            this.matrix = matrix;
+        }
+        
+        public int get(int x, int y) {
+            return matrix[y][x];
+        }
+        
+        public boolean accept(int x, int y) {
+          if(x < 0 || y < 0) {
+              return false;
+          }
+          if(x >= matrix[0].length) {
+              return false;
+          }
+          if(y >= matrix.length) {
+              return false;
+          }
+          return true;
+        }
+    }
+    
+    private static class Move {
+        private Matrix matrix;
+        private int x;
+        private int y;
+        
+        public Move(Matrix matrix, int x, int y) {
+            this.matrix = matrix;                   
+            this.x = x;
+            this.y = y;     
+        }
+        
+        public List<Move> moves(Set<Move> path) {
+           List<Move> moves = new ArrayList<>();
+            
+            makeMove(moves, x + 1, y, path);
+            makeMove(moves, x - 1, y, path);
+            makeMove(moves, x, y + 1, path);
+            makeMove(moves, x, y - 1, path);
+            
+            return moves;
+        }
+        
+        public void makeMove(List<Move> moves, int x, int y, Set<Move> path) {
+            if(matrix.accept(x, y) && matrix.get(x, y) > matrix.get(this.x, this.y)) {
+                Move newMove = new Move(matrix, x, y);
+                
+                if(!path.contains(newMove)) {
+                    moves.add(newMove);
+                }
+            }            
+        }
+        
+        @Override
+        public int hashCode() {
+           return x ^ y;
+        }
+        
+        @Override
+        public boolean equals(Object other) {
+            if(other instanceof Move) {
+                Move move = (Move)other;
+                return move.x == x && move.y == y;
+            }
+            return false;
+        }
+    }
+}
+*/

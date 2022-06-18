@@ -1,0 +1,48 @@
+// https://leetcode.com/problems/longest-valid-parentheses/
+
+//assert longestValidParens("(()") == 2;
+assert longestValidParens("(())") == 4;
+
+func longestValidParens(s) {
+   let hist = new Stack();
+   let work = new Stack();
+   let max = 0;
+   
+   for(let i = 0; i < s.length; i++) {
+      let next = s.charAt(i);
+      
+      println(hist);
+      
+      if(next == ')') {
+         if(work.isEmpty()) {
+            hist.clear();
+         } else {
+           let size = (i - work.pop()) + 1;
+           
+           if(size > max) {
+              max = size;
+           }
+           if(work.isEmpty()) {
+              if(!hist.isEmpty()) {
+                  println(hist.peek());
+                 let total = hist.pop() + size;
+                 
+                 
+                 
+                 if(total > max) {
+                    max = total;
+                 }
+                 hist.push(total);
+              }
+           } else {
+             hist.push(size); // push to combine
+           }
+         }
+      } else {
+         work.push(i);
+         hist.push(0);
+      }
+   }
+   println(max);
+   return max;
+}

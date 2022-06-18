@@ -1,0 +1,55 @@
+import util.stream.Collectors;
+import util.regex.Pattern;
+
+var ROOT = "C:\\Work\\development\\simpleframework\\simple\\simple-http\\src\\test\\java\\org\\simpleframework\\http";
+var DEST = "C:\\Work\\development\\eirex\\eirex-core\\eirex-core-http\\src\\test\\java\\com\\eirex\\http";
+
+
+File(ROOT).listFiles().forEach(file -> {
+  if(file.isFile()) {
+     build(file, File(DEST, file.name));
+  }
+});
+
+   
+function build(source, dest) {
+ 
+      println(dest);
+      let text = stripComments(source.readLines());
+      dest.writeText(text);
+   
+}
+
+function stripComments(lines) {
+   let result = "";
+   let ignore = false;
+   let compress = false;
+   
+   for(line in lines) {
+     if(line.trim().startsWith("/*")) {
+       ignore = true;
+     }
+     if(!ignore) {
+        if(!line.trim().endsWith("*/") && !line.trim().startsWith("/*")) {
+           line = line.replace("org.simpleframework.transport", "com.eirex.http.io");
+         line = line.replace("org.simpleframework.http", "com.eirex.http");
+           let matcher = Pattern.compile("(.*[\\s|\\.])get([A-Z])(.*)").matcher(line);
+           if(matcher.matches()) {
+              result += matcher.group(1) + matcher.group(2).toLowerCase() + matcher.group(3) + "\n";
+           } else {
+              if(line.trim().contains("interface")) {
+                 compress = true;
+              }
+              if(!compress || !line.trim().isEmpty()) {
+                 result += line + "\n";
+              } 
+           }
+        }
+     }     
+     if(ignore && line.trim().endsWith("*/")) {
+        ignore = false;
+     }
+     
+   }
+   return result;
+}

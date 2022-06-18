@@ -161,7 +161,7 @@ class ThreadPool extends ThreadGroup {
                     task.run();
                 }
                 catch (t: Throwable) {
-                     t.printStackTrace();
+                     //t.printStackTrace();
                     pool.uncaughtException(thread, t);
                 }
             }

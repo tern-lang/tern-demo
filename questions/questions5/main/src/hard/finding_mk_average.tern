@@ -1,0 +1,107 @@
+// https://leetcode.com/problems/finding-mk-average/
+
+// here the priority queue for each calculation seems to cost
+// too much time. What is needed is a scrolling window where
+// we add to a bucket of items and when we remove with deduct
+// from that bucket. So the add is more expensive but the 
+// calculation is faster.
+
+let avg = new MKAverage(6,1);
+
+avg.addElement(3);
+avg.addElement(1);
+avg.addElement(12);
+avg.addElement(5);
+avg.addElement(3);
+avg.addElement(4);
+
+assert avg.calculateMKAverage() == 3;
+
+class MKAverage {
+   private high: PriorityQueue;
+   private q: ArrayDeque;
+   private m;
+   private k;
+
+   new(m, k) {
+     this.high = new PriorityQueue((a,b) -> Integer.compare(b, a));
+     this.q = new ArrayDeque();
+     this.m = m;
+     this.k = k;
+   }
+    
+   public addElement(num) {
+     q.offer(num);
+     
+     if(q.length > m) {
+        q.poll();
+     }
+   }
+    
+   public calculateMKAverage() {
+     if(q.length < m) {
+        return -1;
+     }
+     high.clear();
+     
+     for(let item in q) {
+        high.offer(item);
+     }
+     for(let i = 0; i < k; i++) { // remove highest k
+        high.poll();
+     }
+     let count = m - (2*k);
+     let total = 0;
+     
+     while(high.length > k) {
+        total += high.poll();
+     }
+     return Math.round(total/count);
+   }
+}
+
+
+/*
+class MKAverage {
+    private final  Queue<Integer> q;
+    private final PriorityQueue<Integer> pq;
+    private final int m;
+    private final int k;
+    public MKAverage(int m, int k) {
+        this.q = new ArrayDeque<>();
+        this.pq = new PriorityQueue<>();
+        this.m = m;
+        this.k = k;
+    }
+    
+    public void addElement(int num) {
+        q.offer(num);
+        
+        if(q.size() > m) {
+            q.poll();
+        }
+    }
+    
+    public int calculateMKAverage() {
+        if(q.size() < m) {
+            return -1;
+        }
+        pq.clear();
+        
+        for(int x : q) {
+            pq.offer(x); // sort the items
+        }        
+        double total = 0;
+        int count = m - (2*k); // ignore the high k
+        
+        for(int i = 0; i < k; i++) {
+            pq.poll();
+        }
+        while(pq.size() > k) {
+           total += pq.poll();            
+        }
+        return (int)Math.round(total/count);
+    }
+}
+
+ */

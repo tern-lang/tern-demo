@@ -1,0 +1,85 @@
+
+const order = new Order(9092.50, 10, 3);
+
+createPosition(0.01, order);
+
+/**
+ * BitMEX
+ *
+ * Interest Rate (I) = (Interest Quote Index - Interest Base Index) / Funding Interval
+ *  where
+ *  Interest Base Index = The Interest Rate for borrowing the Base currency
+ *  Interest Quote Index = The Interest Rate for borrowing the Quote currency
+ *  Funding Interval = 3 (Since funding occurs every 8 hours) 
+ *
+ * https://www.bitmex.com/app/perpetualContractsGuide
+ */
+func calculateFundingRate() {
+  let interestBaseIndex = 0.03;
+  let interestQuoteIndex = 0.06;
+  let fundingInterval = 24 / 8;
+  
+  return (interestQuoteIndex - interestBaseIndex) - fundingInterval;
+}
+
+
+func calculatePremiumIndex(markPrice) {
+}
+
+
+func createPosition(marginRequirement, order) {
+   let contractPrice = (1/order.price);
+   let totalQuantity = (order.quantity * contractPrice) * order.leverage;
+   let initialMargin = marginRequirement * totalQuantity;
+   
+   println("price=${BigDecimal.valueOf(contractPrice).toPlainString()} quantity=${order.quantity} totalQuantity=${totalQuantity}");
+   println(BigDecimal.valueOf(initialMargin).toPlainString());
+}
+
+class PositionTracker {
+
+   add(order) {
+      
+   }
+   
+   calculate(marginRequirement, order) {
+      let contractPrice = (1/order.price);
+      let totalQuantity = (order.quantity * contractPrice) * order.leverage;
+      let initialMargin = marginRequirement * totalQuantity;
+      
+      println("price=${BigDecimal.valueOf(contractPrice).toPlainString()} quantity=${order.quantity} totalQuantity=${totalQuantity}");
+      println(BigDecimal.valueOf(initialMargin).toPlainString());
+   }
+}
+
+class Position {
+   const margin;
+   const value;
+   const quantity;
+   // bankruptPrice;
+   // liquidationPrice;
+   
+   new(margin, value, quantity) {
+      this.margin = margin;
+      this.value = value;
+      this.quantity = quantity;
+   }
+   
+   override toString() {
+      return "margin=${margin} value=${value} quantity=${quantity}";
+   }
+}
+
+class Order {
+   const quantity;
+   const price;
+   const leverage;
+   
+   new(price, quantity, leverage) {
+      this.price = price;
+      this.quantity = quantity;
+      this.leverage = leverage;
+   }
+}
+
+

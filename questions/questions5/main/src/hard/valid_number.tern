@@ -1,0 +1,50 @@
+
+assert isNumber("0");
+assert !isNumber("e");
+assert isNumber("0e1");
+assert isNumber("10e+2");
+assert !isNumber("-+3");
+
+func isNumber(s) {
+   let off = 0;
+   let digits = 0;
+   let dot = 0;
+   let exp = 0;
+   
+   if(s.startsWith("-") || s.startsWith("+")) {
+      if(s.length == 1) {
+         return false;
+      }
+      let next = s.charAt(1);
+      
+      if("0123456789.".indexOf(next) == -1) {
+         return false;
+      }
+      off = 1;
+   }
+   while(off < s.length) {
+      let next = s.charAt(off++);
+      
+      if(next == '.') {
+         if(dot++ > 0) {
+            return false;
+         }
+      } else if(next == 'e' || next == 'E') {
+         if(exp++ > 0) {
+            return false;
+         }
+         if(off == s.length) {
+           return false;
+         }
+         if(s.charAt(off) == '+' || s.charAt(off) == '-') {
+            off++;
+         }
+      } else {
+         if("0123456789".indexOf(next) == -1) {
+            return false;
+         }
+      }
+   }
+   return true;
+   
+}

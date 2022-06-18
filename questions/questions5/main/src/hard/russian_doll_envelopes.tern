@@ -1,0 +1,136 @@
+// https://leetcode.com/problems/russian-doll-envelopes/submissions/
+
+assert maxEnvelopes([[5,4],[6,4],[6,7],[2,3]]) == 3;
+assert maxEnvelopes([[4,5],[4,6],[6,7],[2,3],[1,1]]) == 4;
+assert maxEnvelopes([[5,4],[6,4],[6,7],[2,3]]) == 3;
+assert maxEnvelopes([[1,1],[1,1],[1,1]]) == 1;
+
+println(maxEnvelopes([[34,43],[49,29],[23,17],[22,12],[29,11],[13,42],[8,23],
+                      [48,23],[8,10],[25,31],[6,24],[36,16],[49,33],[9,36],
+                      [15,1],[29,4],[15,34],[32,22],[5,25],[46,14],[28,6],
+                      [40,1],[13,5],[24,25],[34,36],[40,21],[13,50],[45,47],
+                      [4,10],[50,5],[22,43],[47,38],[18,47],[1,32],[33,32],
+                      [20,19],[42,26],[44,38],[35,11],[27,29],[16,16],[36,40],
+                      [22,8],[46,41],[8,26],[8,38],[29,32],[12,39],[36,9],
+                      [28,39],[1,22],[36,33],[35,1],[37,2],[18,20],[28,32],
+                      [5,38],[36,39],[2,3],[3,5],[43,20],[23,7],[24,18],
+                      [17,16],[24,43],[36,23],[6,20],[28,21],[12,26],[16,45],
+                      [30,38],[34,48]]));
+
+func maxEnvelopes(values) {
+   let nodes = [];
+   let max = 0;
+   
+   for(let i = 0; i < values.length; i++) {
+      nodes[i] = new Node(i, values[i][0], values[i][1]);
+   }
+   // here we sort the nodes by width, so largest width first
+   Collections.sort(nodes, (a, b) -> Integer.compare(b.width, a.width));
+   
+   for(let i = 0; i < nodes.length; i++) {
+      max = Math.max(max, longestPath(nodes[i], nodes, 1));
+   }
+   return max;
+}
+
+func longestPath(node: Node, nodes: List<Node>, depth: Integer) {
+   let max = depth;
+   
+   for(let i = 0; i < nodes.length; i++) {
+     // widths increase
+     if(nodes[i].width <= node.width) {
+        break;
+     }
+     if(node.fitsInside(nodes[i])) {
+        if(nodes[i].maxDepth == -1) {
+           nodes[i].maxDepth = longestPath(nodes[i], nodes, 1);
+        }
+        let nestedPath = depth + nodes[i].maxDepth;
+        
+        max = Math.max(max, nestedPath);
+     }
+   }
+   return max;
+}
+
+class Node {
+   public maxDepth = -1;
+   public width;
+   public height;
+   public index; // unique id
+   
+   new(index, width, height) {
+      this.width = width;
+      this.height = height;
+      this.index = index;
+   }
+   
+   public fitsInside(node: Node){
+      return node.width > width && node.height > height;
+   }
+   
+   public toString() {
+      return `[${width}, ${height}]`;
+   }
+}
+
+
+
+/*
+// leetcode.com answer in Java
+
+class Solution {
+    public int maxEnvelopes(int[][] envelopes) {
+        List<Node> list = new ArrayList<>();
+        int max = 0;
+        
+        for(int i = 0; i < envelopes.length; i++) {
+            list.add(new Node(i, envelopes[i][0], envelopes[i][1]));
+        }
+        Collections.sort(list, (a, b) -> Integer.compare(b.width, a.width));
+        
+        for(int i = 0; i < list.size(); i++) {
+           max = Math.max(max, longestPath(list.get(i), list, 1));            
+        }
+        return max;
+    }
+    
+    public int longestPath(final Node node, List<Node> nodes, int depth) {
+        int max = depth;
+
+        for(int i = 0; i < nodes.size(); i++) {
+            final Node next = nodes.get(i);
+
+            if(next.width <= node.width) {
+                break;
+            }
+            if(node.fitsInside(next)) {
+               if(next.maxDepth == -1) {
+                  next.maxDepth = longestPath(next, nodes, 1);
+               }                         
+               max = Math.max(max, depth + next.maxDepth);                             
+            }
+        }
+        return max;
+    }
+
+    
+    private static class Node {
+        
+        int maxDepth = -1;
+        int index;
+        int width;
+        int height;
+        
+        public Node(int index, int width, int height) {
+            this.index = index;
+            this.height = height;
+            this.width = width;
+        }
+        
+        public boolean fitsInside(Node node) {
+            return node.width > width && node.height > height;
+        }
+    }
+}
+*/

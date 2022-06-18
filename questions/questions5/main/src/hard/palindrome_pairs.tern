@@ -1,0 +1,93 @@
+// https://leetcode.com/problems/palindrome-pairs/solution/
+
+//
+// This solution works by creating prefixes?? Think the solution
+// below is better, however not sure if it explores too much.
+//
+
+palindromePairs(["bat","tab","cat"]);
+// palindromePairs(["abcd","dcba","lls","s","sssll"]);
+// palindromePairs(["bat","tab","cat"]);
+// palindromePairs(["a",""]);
+
+
+func palindromePairs(words) {
+   let wordIndex: Map<Integer, List<Word>> = {:};
+   let maxLength = 0;
+   
+   for(let i = 0; i < words.length; i++) {
+      let min = minLength(words[i]);
+      
+      maxLength = Math.max(maxLength, words[i].length);
+      wordIndex.computeIfAbsent(words[i].length, ignore -> []).add(new Word(words[i], min, i));
+   }
+   let matches = [];
+   
+   wordIndex.forEach((key, wordList) -> {
+      wordList.forEach(word -> {
+         matches.addAll(findPairs(word, wordIndex, maxLength));
+      });
+   });
+   
+   println(matches);
+}
+
+func findPairs(word: Word, wordIndex: Map<Integer, List<Word>>, maxLength) {
+   let pairs = [];
+
+   for(n in word.minRequired to maxLength) {
+      let possibleWords = wordIndex.get(n);
+
+      if(possibleWords) {
+         possibleWords.forEach(possibleWord -> {
+            if(word.n != possibleWord.n) {
+               if(isPalindrome(word.word + possibleWord.word)) {
+                  pairs.add([word.n, possibleWord.n]);
+               } 
+            }
+         });
+      }
+   }
+   return pairs;
+}
+
+func minLength(word) {
+   let minRequired = word.length;
+   
+   for(let i = word.length; i >= 0; i--) { 
+      let subWord = word.substring(i);
+
+      if(isPalindrome(subWord)) {
+         minRequired = i;
+      }
+   }
+   return minRequired;
+}
+
+func isPalindrome(word) {
+   let i = 0;
+   let j = word.length() - 1;
+        
+   while(i < j) {
+      if(word.charAt(i++) != word.charAt(j--)) {
+         return false;
+      }
+   }
+   return true;
+}
+
+class Word {
+  let minRequired;
+  let word;
+  let n;
+  
+  new(word, minRequired, n) {
+     this.minRequired = minRequired;
+     this.word = word;
+     this.n = n;
+  }
+  
+  override toString() {
+     return `${word}/${n}/${minRequired}`;
+  }
+}

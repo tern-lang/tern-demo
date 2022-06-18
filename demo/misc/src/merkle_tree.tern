@@ -1,0 +1,14 @@
+
+
+
+
+
+class BlockChain {
+
+
+   update(e: BlockEvent) {
+   }
+}
+
+class BlockEvent {
+}

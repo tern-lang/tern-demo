@@ -1,1 +1,11 @@
-println(11);
+
+
+loop {
+   let resp = URL("https://eimex.exchange/api/candles/BTCUSDTP/1Y")
+      .get()
+      .response();
+      
+   println(resp);
+   sleep(1000);
+      
+}

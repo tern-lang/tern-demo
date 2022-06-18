@@ -1,0 +1,26 @@
+// https://leetcode.com/problems/patching-array
+
+// This seems more like math than problem solving. Here there
+// is a rather complex proof that suggests the distance to the
+// missing number can be found by one of the number in the sorted set.
+
+assert minPatches([1,3], 6) == 1;
+
+func minPatches(nums, n) {
+   let patches = 0, i = 0;
+   let miss = 1; // use long to avoid integer overflow error
+   
+   while (miss <= n) {
+      if (i < nums.length && nums[i] <= miss) // miss is covered
+         miss += nums[i++];
+      else { // patch miss to the array
+         miss += miss;
+         patches++; // increase the answer
+      }
+   }
+   return patches;
+}
+
+
+
+

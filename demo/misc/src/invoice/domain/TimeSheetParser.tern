@@ -34,7 +34,7 @@ module TimeSheetParser {
          calendar.setTime(date);
          
          if(calendar.get(Calendar.DAY_OF_WEEK) != Calendar.SUNDAY) { // make sure we end on sunday
-            throw new IllegalArgumentException("The date " + list[0] + " is not a valid week ending");
+            throw new IllegalArgumentException("The date " + list[0] + " is not a valid week ending (Sunday)");
          }
          calendar.add(Calendar.DATE, -6); // go back to first day of week
          assert calendar.get(Calendar.DAY_OF_WEEK) == Calendar.MONDAY; // make sure we end on sunday         

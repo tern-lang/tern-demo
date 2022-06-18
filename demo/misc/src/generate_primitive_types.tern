@@ -13,36 +13,50 @@ class Primitive {
 }
 
 const types = [
+   Primitive("Decimal", "Decimal", "DECIMAL_SIZE"),
    Primitive("int", "Int", "INT_SIZE"),
    Primitive("long", "Long", "LONG_SIZE"),
    Primitive("short", "Short", "SHORT_SIZE"),
    Primitive("byte", "Byte", "BYTE_SIZE"),
-   Primitive("boolean", "Bool", "BOOL_SIZE"),
+   Primitive("boolean", "Boolean", "BOOL_SIZE"),
    Primitive("double", "Double", "DOUBLE_SIZE"),
-   Primitive("float", "Float", "FLOAT_SIZE")];
-   
-const path = "C:\\Work\\development\\tern-lang\\tern-message\\tern-message\\src\\main\\java\\org\\ternlang\\message\\primitive";  
-const file = File(path);
+   Primitive("float", "Float", "FLOAT_SIZE")
+];
 
-if(!file.exists) {
+// const types = [
+//    Primitive("Date", "Date", "DATE_SIZE"),
+//    Primitive("Time", "Time", "TIME_SIZE"),
+//    Primitive("DateTime", "DateTime", "DATE_TIME_SIZE")
+// ];
+   
+//const input = "C:\\Work\\development\\tern-lang\\tern-message\\tern-message\\src\\main\\java\\org\\ternlang\\message\\time";  
+//const output = "C:\\Work\\development\\tern-lang\\tern-message\\tern-message\\src\\main\\java\\org\\ternlang\\message\\time";  
+
+const input = "C:\\Work\\development\\tern-lang\\tern-message\\tern-message\\src\\main\\java\\org\\ternlang\\message\\primitive";  
+const output = "C:\\Work\\development\\tern-lang\\tern-message\\tern-message\\src\\main\\java\\org\\ternlang\\message\\primitive"; 
+
+const inputDir = File(input);
+const outputDir = File(output);
+
+if(!inputDir.exists) {
    throw new IllegalStateException("Could not find path");
 }
-const files = File(path).findFiles("Char.*.java")
+const files = inputDir.findFiles("IntOptionWrapper.java")
    .stream()
    .collect(Collectors.toList());
 
 files.forEach(file -> {
-   if(file.name == "CharCodec.java" || file.name == "CharBuilder.java") {
+   //if(file.name != "DoubleArrayCodec.java") {
       const text = file.readText();
-      
+      print(file);
       for(t in types) {
-         const newFile = file.canonicalPath.replace("Char", t.name);
-         const newText = text.replaceAll("char", t.java).replaceAll("Char", t.name).replace("CHAR_SIZE", t.size);
+         const newFile = File(outputDir, file.name.replace("Int", t.name));
+         const newText = text.replaceAll("int", t.java).replaceAll("Int", t.name).replace("INT_SIZE", t.size);
          
          println(newFile);
-         File(newFile).writeText(newText);
+         newFile.writeText(newText);
       }
-   }
+   //}
 });
 
    

@@ -1,0 +1,81 @@
+// https://leetcode.com/problems/longest-increasing-subsequence/
+
+assert lengthOfLIS([10,9,2,5,3,7,101,18]) == 4;
+
+func lengthOfLIS(const nums) {
+   let lengths = [];
+   let max = 0;
+   
+   for(let i = 0; i < nums.length; i++) {
+      lengths[i] = null;
+   }
+   for(let i = nums.length - 1; i >= 0; i--) {
+      max = Math.max(max, calcLengthOfLIS(nums, lengths, i));
+   }
+   return max;
+}
+
+func calcLengthOfLIS(const nums: List<Integer>, const cache: List<Integer>, const fromIndex: Integer) {
+   if(fromIndex >= nums.length) {
+      return 0;
+   }
+   let result = cache[fromIndex];
+   
+   if(result == null) {
+      let value = nums[fromIndex];
+      let max = 1;
+      
+      for(let i = fromIndex + 1; i < nums.length; i++) {
+         let next = nums[i];
+         
+         if(next > value) {
+            max = Math.max(max, 1 + calcLengthOfLIS(nums, cache, i));
+         }
+      }
+      cache[fromIndex] = max;
+      return max;
+   }
+   return result;
+}
+
+
+/*
+class Solution {
+    public int lengthOfLIS(int[] nums) {
+        int[] lengths = new int[nums.length];
+        int max = 0;
+        
+        for(int i = 0; i < nums.length; i++) {
+           lengths[i] = -1;
+        }
+        for(int i = nums.length - 1; i >= 0; i--) {
+            max = Math.max(max, calcLengthOfLIS(nums, lengths, i));
+        }
+        return max;
+        
+    }
+    
+    private int calcLengthOfLIS(int[] nums, int[] cache, int fromIndex) {
+        if(fromIndex >= nums.length) {
+            return 0;
+        }
+        int result = cache[fromIndex];
+        
+        if(result == -1) {
+            int value = nums[fromIndex];
+            int max = 1;
+            
+            for(int i = fromIndex + 1; i < nums.length; i++) {
+                int next = nums[i];
+                
+                if(next > value) {
+                    max = Math.max(max, 1 + calcLengthOfLIS(nums, cache, i));
+                }
+            }
+            cache[fromIndex] = max;
+            return max;
+        }
+        return result;
+    }
+}
+*/

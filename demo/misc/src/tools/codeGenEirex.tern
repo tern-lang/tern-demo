@@ -1,0 +1,18 @@
+
+let path = "C:\\Work\\development\\eirex\\eirex-core\\eirex-core\\src\\main\\java\\com\\eirex\\core\\primitive";
+let list = [
+   "DecimalArray.java",
+   "DecimalArrayBuilder.java",
+   "DecimalArrayCodec.java",
+   "DecimalArrayOption.java",
+   "DecimalArrayOptionBuilder.java",
+   "DecimalArrayOptionCodec.java"
+];
+
+File(path).listFiles().forEach(file -> {
+   if(list.contains(file.name)) {
+      let text = file.readText().replace("Decimal", "String");
+      File(file.canonicalPath.replace("Decimal", "String")).writeText(text);
+   }
+});
+
