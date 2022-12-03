@@ -27,6 +27,27 @@ enum Move {
       this.value = value;
    }
    
+   outcome(score: Score) {
+      if(score == Score.DRAW) {
+         return this;
+      }
+      if(score == Score.LOSE) {
+         switch(this) {
+            case ROCK: return PAPER;
+            case PAPER: return SCISSORS;
+            case SCISSORS: return ROCK;
+         }
+      }
+      if(score == Score.WIN) {
+         switch(this) {
+            case ROCK: return SCISSORS;
+            case PAPER: return ROCK;
+            case SCISSORS: return PAPER;
+         }
+      }
+      throw Exception("No match for ${score}");
+   }
+   
    score(other: Move) {
       if(other.value == value) {
          return Score.DRAW;
@@ -52,15 +73,25 @@ assert Move.ROCK.score(Move.SCISSORS) == Score.WIN;
 assert Move.PAPER.score(Move.SCISSORS) == Score.LOSE;
 assert Move.PAPER.score(Move.ROCK) == Score.WIN;
 
+assert Move.ROCK.outcome(Score.WIN) == Move.SCISSORS;
+assert Move.PAPER.outcome(Score.DRAW) == Move.PAPER;
+assert Move.PAPER.outcome(Score.WIN) == Move.ROCK;
+assert Move.PAPER.outcome(Score.LOSE) == Move.SCISSORS;
+
 const YOU = {'X': Move.ROCK, 'Y': Move.PAPER, 'Z': Move.SCISSORS};
 const OPPONENT = {'A': Move.ROCK, 'B': Move.PAPER, 'C': Move.SCISSORS};
+const OUTCOME = {'Z': Score.LOSE, 'Y': Score.DRAW, 'X': Score.WIN}; // switch as its you
 
 let lines = Fetch.get(2).reader.readLines;
 let score = 0;
 
 for(line in lines) {
    let pair = line.trim.split("\\s+");
-   score += score(OPPONENT[pair[0]], YOU[pair[1]]);
+   let opponent = OPPONENT[pair[0]];
+   //let you = YOU[pair[1]];
+   let you = opponent.outcome(OUTCOME[pair[1]]);
+   
+   score += score(opponent, you);
 }
 
 println(score);
