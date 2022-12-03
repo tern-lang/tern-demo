@@ -1,0 +1,18 @@
+import solutions.Fetch;
+
+const lines = Fetch.get(1).reader.readLines;
+const counts = [];
+let total = 0;
+
+for(line in lines) {
+  if(line.trim.length == 0) {
+     counts.add(total);
+     total = 0;
+  } else {
+     total += Integer.parseInt(line.trim);
+  }
+}
+
+counts.add(total);
+counts.sort((a, b) -> Integer.compare(b, a));
+println(counts.get(0));

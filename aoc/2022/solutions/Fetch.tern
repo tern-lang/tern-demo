@@ -1,0 +1,13 @@
+
+module Fetch {
+   const session = "53616c7465645f5f06b49dfe5ccaa7e8467a095372e3867c932f48e4ebf67eba9eb74b304117e5e16273586be7f9f4c353873798b871f1d685b6bd7be8ff6093";
+   const year = 2022;
+   
+   get(day) {
+      URL("https://adventofcode.com/${year}/day/${day}/input")
+         .header("Cookie", "session=${session}")
+         .get()
+         .response()
+         .getInputStream();
+   }
+}

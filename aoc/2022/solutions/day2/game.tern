@@ -1,0 +1,69 @@
+import solutions.Fetch;
+
+enum Score {
+   WIN(6),
+   DRAW(3),
+   LOSE(0);
+   
+   let value;
+   
+   new(value) {
+      this.value = value;
+   }
+   
+   toString() {
+      "${name} (${value})";
+   }
+}
+
+enum Move {
+   ROCK(1),
+   PAPER(2),
+   SCISSORS(3);
+   
+   let value;
+   
+   new(value) {
+      this.value = value;
+   }
+   
+   score(other: Move) {
+      if(other.value == value) {
+         return Score.DRAW;
+      }
+      if(other == Move.ROCK) {
+         return this == PAPER ? Score.WIN : Score.LOSE;
+      }
+      if(other == Move.PAPER) {
+         return this == ROCK ? Score.LOSE : Score.WIN;
+      } 
+      if(other == Move.SCISSORS) {
+         return this == ROCK ? Score.WIN : Score.LOSE;
+      }
+      throw Exception("No match for ${other}");
+   }
+}
+
+func score(opponent: Move, you: Move) {
+   return you.score(opponent).value + you.value;
+}
+
+assert Move.ROCK.score(Move.SCISSORS) == Score.WIN;
+assert Move.PAPER.score(Move.SCISSORS) == Score.LOSE;
+assert Move.PAPER.score(Move.ROCK) == Score.WIN;
+
+const YOU = {'X': Move.ROCK, 'Y': Move.PAPER, 'Z': Move.SCISSORS};
+const OPPONENT = {'A': Move.ROCK, 'B': Move.PAPER, 'C': Move.SCISSORS};
+
+let lines = Fetch.get(2).reader.readLines;
+let score = 0;
+
+for(line in lines) {
+   let pair = line.trim.split("\\s+");
+   score += score(OPPONENT[pair[0]], YOU[pair[1]]);
+}
+
+println(score);
+
+
+

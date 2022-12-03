@@ -118,10 +118,10 @@ func renameDirs(directory, fromPackage, toPackage, test) {
       });
 }
 
-performRefactor("C:\\Work\\development\\eirex\\eirex-core", 
-   "org.ternlang",
+performRefactor("C:\\Work\\development\\eirex\\eirex-proxy", 
    "com.eirex",
-   ["tern-"],
-   "eirex-",
+   "com.eimex",
+   ["eirex-"],
+   "eimex-",
    false);
 

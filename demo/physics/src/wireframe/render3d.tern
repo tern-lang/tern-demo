@@ -656,7 +656,7 @@ class ThreeD extends JPanel with MouseMotionListener {
 
 }
 
-function start(resource)  {
+func start(resource)  {
     let d = new ThreeD();
     let f = new JFrame();
     d.init(d, resource);

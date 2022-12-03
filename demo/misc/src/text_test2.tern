@@ -1,11 +1,16 @@
+let s: String = "";
+
+s.length();
 
 
-loop {
-   let resp = URL("https://eimex.exchange/api/candles/BTCUSDTP/1Y")
-      .get()
-      .response();
-      
-   println(resp);
-   sleep(1000);
-      
+let x: List<String> = [];
+
+x.add("xx");
+x.add(1);
+
+func foo<T>(t: T): T {
+   return "t";
 }
+
+
+println(foo<Integer>("10"));
