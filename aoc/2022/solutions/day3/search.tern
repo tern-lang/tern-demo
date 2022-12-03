@@ -1,0 +1,35 @@
+import solutions.Fetch;
+
+const PRIORITY = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+func score(rucksack) {
+   assert rucksack.length % 2 == 0;
+   
+   let first = rucksack.substring(0, rucksack.length / 2);
+   let second = rucksack.substring(rucksack.length / 2);
+   let items = {};
+   
+   for(pos in 0 to first.length - 1) {
+     items.add(first[pos]);
+   }
+   for(pos in 0 to second.length - 1) {
+      if(items.contains(second[pos])) {
+         return PRIORITY.indexOf(second[pos]) + 1;
+      }
+   }
+   throw new IllegalArgumentException("No common item in ${rucksack}");
+}
+
+assert score("pp") == 16;
+assert score("LL") == 38;
+assert score("tt") == 20;
+
+let lines = Fetch.get(3).reader.readLines;
+let score = 0;
+
+for(line in lines) {
+  println(line);
+  score += score(line.trim);
+}
+
+println(score);

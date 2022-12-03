@@ -1,0 +1,53 @@
+import solutions.Fetch;
+
+class Group {
+  static const PRIORITY = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  const rucksacks = [];
+  
+  add(rucksack) {
+     rucksacks.add(rucksack);
+  }
+  
+  badge() {
+     let items = HashMap();
+     let priorities = TreeSet((a, b) -> Integer.compare(b, a));
+
+     for(index in 0 to rucksacks.length - 1) {
+        for(pos in 0 to rucksacks[index].length - 1) {
+          let item = rucksacks[index][pos];
+          let bag = items.computeIfAbsent(item, ignore -> HashSet());
+          
+          bag.add(index);
+          
+          if(bag.length == 3) {
+            priorities.add(PRIORITY.indexOf(item) + 1);
+          }
+        }
+     }
+     return priorities.iterator.next;
+   }
+   
+   toString() {
+      "${rucksacks}";
+   }
+}
+
+func group(lines): Group {
+  let group = Group();
+  
+  group.add(lines.next);
+  group.add(lines.next);
+  group.add(lines.next);  
+
+  return group;
+}
+
+
+let lines = Fetch.get(3).reader().readLines().iterator();
+let score = 0;
+
+while(lines.hasNext) {
+  score += group(lines).badge();
+}
+
+println(score);
