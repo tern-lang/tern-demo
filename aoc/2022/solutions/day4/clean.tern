@@ -1,0 +1,37 @@
+import solutions.Fetch;
+
+class Pair {
+   const start;
+   const end;
+   
+   new(pair) {
+      this.start = Integer.parseInt(pair.split("-")[0]);
+      this.end = Integer.parseInt(pair.split("-")[1]);
+   }
+   
+   toString() {
+      "${start} ${end}";
+   }
+}
+
+
+let lines = Fetch.get(4).reader().readLines().iterator();
+let overlaps = 0;
+
+while(lines.hasNext()) {
+   let line = lines.next().trim();
+   let pairs = line.split(",");
+   let first = Pair(pairs[0].trim);
+   let second = Pair(pairs[1].trim);
+   
+   if(first.start > second.start) {
+      (first, second) = (second, first);
+   }
+   if(first.start == second.start) {
+      overlaps++;
+   } else if(first.start < second.start && first.end >= second.start) {
+      overlaps++;
+   }
+}
+
+println(overlaps);
