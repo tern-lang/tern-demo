@@ -1,0 +1,104 @@
+import static lang.Integer.*;
+import solutions.Fetch;
+import util.regex.Pattern;
+
+class Move {
+
+   const source;
+   const destination;
+   const count;
+   
+   new(count, source, destination) {
+      this.source = parseInt(source);
+      this.destination = parseInt(destination);
+      this.count = parseInt(count);
+   }
+   
+   toString() {
+      "move ${count} from ${source} to ${destination}";
+   }
+}
+
+
+let lines = Fetch.get(5).reader().readLines().iterator();
+let overlaps = 0;
+
+let stacks = HashMap<Integer, Deque<String>>();
+let moves = ArrayList<Move>();
+
+while(lines.hasNext()) {
+   let line = lines.next();
+   
+   if(line.startsWith("move")) {
+      moves.add(move(line));
+      
+      while(lines.hasNext()) {
+         let move = move(lines.next().trim());
+         
+         if(move != null) {
+            moves.add(move);
+         }
+      }
+   } else if(!line.isEmpty()) {
+      let items = items(line);
+      
+      for(let i = 0; i < items.length; i++) {
+         let stack = stacks.computeIfAbsent(i + 1, ignore -> ArrayDeque<String>());
+         let item = items[i];
+         
+         if(!item.isEmpty() && item.startsWith("[")) {
+            stack.offerLast(item.substring(1, item.length - 1));
+         }
+      }
+   }
+}
+
+apply(moves, stacks);
+dump(stacks);
+
+func dump(stacks: Map<Integer, Deque<String>>) {
+   stacks.entrySet().forEach(entry -> {
+      println(entry.key + " " + entry.value);
+   });
+}
+
+func apply(moves: List<Move>, stacks: Map<Integer, Deque<String>>) {
+   for(move in moves) {
+      let source = stacks[move.source];
+      let destination = stacks[move.destination];
+      let moving = ArrayDeque<String>();
+      
+      for(i in 0 to move.count - 1) {
+         moving.offerFirst(source.removeFirst());
+      }
+      while(!moving.isEmpty()) {
+         destination.offerFirst(moving.removeFirst());
+      }
+   }
+}
+
+func move(move): Move {
+   let pattern = Pattern.compile("move (\\d+) from (\\d+) to (\\d+)");
+   let matcher = pattern.matcher(move);
+   
+   if(matcher.matches()) {
+      return Move(
+         matcher.group(1),
+         matcher.group(2),
+         matcher.group(3));
+   }
+   return null;
+}
+
+
+func items(line): List<String> {
+   let items = [];
+   
+   while(!line.isEmpty()) {
+      let item = line.substring(0, 3).trim();
+      
+      line = line.substring(line.length > 3 ? 4 : 3);
+      items.add(item);
+   }
+   return items;
+}
