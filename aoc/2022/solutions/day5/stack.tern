@@ -1,3 +1,5 @@
+#!/usr/bin/env tern
+
 import static lang.Integer.*;
 import solutions.Fetch;
 import util.regex.Pattern;
@@ -19,10 +21,7 @@ class Move {
    }
 }
 
-
 let lines = Fetch.get(5).reader().readLines().iterator();
-let overlaps = 0;
-
 let stacks = HashMap<Integer, Deque<String>>();
 let moves = ArrayList<Move>();
 
@@ -33,11 +32,7 @@ while(lines.hasNext()) {
       moves.add(move(line));
       
       while(lines.hasNext()) {
-         let move = move(lines.next().trim());
-         
-         if(move != null) {
-            moves.add(move);
-         }
+         moves.add(move(lines.next()));
       }
    } else if(!line.isEmpty()) {
       let items = items(line);
@@ -57,22 +52,18 @@ apply(moves, stacks);
 dump(stacks);
 
 func dump(stacks: Map<Integer, Deque<String>>) {
-   stacks.entrySet().forEach(entry -> {
-      println(entry.key + " " + entry.value);
-   });
+   stacks.entrySet().forEach(entry -> println("${entry.key} ${entry.value}"));
 }
 
 func apply(moves: List<Move>, stacks: Map<Integer, Deque<String>>) {
    for(move in moves) {
-      let source = stacks[move.source];
-      let destination = stacks[move.destination];
       let moving = ArrayDeque<String>();
       
       for(i in 0 to move.count - 1) {
-         moving.offerFirst(source.removeFirst());
+         moving.offerFirst(stacks[move.source].removeFirst());
       }
       while(!moving.isEmpty()) {
-         destination.offerFirst(moving.removeFirst());
+         stacks[move.destination].offerFirst(moving.removeFirst());
       }
    }
 }
