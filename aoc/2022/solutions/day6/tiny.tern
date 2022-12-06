@@ -1,0 +1,34 @@
+import solutions.Fetch;
+
+const t = Fetch.get(6).reader().readText();
+const f = (s) -> {
+   let a = new Integer[256];
+   let x = 0;
+   
+   for(let i = 0; i < t.length; i++) {
+      x += ++a[t[i]] == 1 ? 1 : 0;
+      
+      if(i >= s) {
+         if(((a[t[i - s]] = a[t[i-s]] - 1)) == 0) {
+            x -= 1;
+         }
+         if(x == s) {
+            return i + 1;
+         }
+      }
+   }
+};
+
+println(f(4));
+println(f(14));
+
+func find(i) {
+   t.sliding(i)
+      .stream()
+      .filter(s -> s.distinct.length == i)
+      .findFirst()
+      .ifPresent(s -> println(t.indexOf(s) + i));
+}
+
+find(4);
+find(14);

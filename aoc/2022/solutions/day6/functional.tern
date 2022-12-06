@@ -1,0 +1,14 @@
+import solutions.Fetch;
+
+const t = Fetch.get(6).reader().readText();
+
+func f(i) {
+   t.sliding(i)
+      .stream()
+      .filter(s -> s.distinct.length == i)
+      .findFirst()
+      .map(s -> t.indexOf(s) + i)
+      .get();
+}
+
+println("${f(4)} ${f(14)}");
