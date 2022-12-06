@@ -2,18 +2,19 @@
 
 import solutions.Fetch;
 
-const text = Fetch.get(6).reader().readText();
-const counts = {:};
-const size = 14;
+let text = Fetch.get(6).reader().readText();
+let counts = new Integer[26];
+let size = 14;
+let total = 0;
 
 for(let i = 0; i < text.length; i++) {
-   counts[text[i]] = (counts[text[i]] ?? 0) + 1;
+   total += ++counts[text[i] - 97] == 1 ? 1 : 0;
    
    if(i >= size) {
-      if(((counts[text[i - size]] = counts[text[i - size]] - 1)) == 0) {
-         counts.remove(text[i - size]);
+      if(((counts[text[i - size] - 97] = counts[text[i - size] - 97] - 1)) == 0) {
+         total -= 1;
       }
-      if(counts.size == size) {
+      if(total == size) {
          println(i + 1);
          break;
       }
