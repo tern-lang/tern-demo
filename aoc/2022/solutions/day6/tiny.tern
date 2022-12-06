@@ -21,14 +21,3 @@ const f = (s) -> {
 
 println(f(4));
 println(f(14));
-
-func find(i) {
-   t.sliding(i)
-      .stream()
-      .filter(s -> s.distinct.length == i)
-      .findFirst()
-      .ifPresent(s -> println(t.indexOf(s) + i));
-}
-
-find(4);
-find(14);
