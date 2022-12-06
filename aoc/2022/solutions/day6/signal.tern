@@ -1,0 +1,32 @@
+#!/usr/bin/env tern
+
+import solutions.Fetch;
+
+const text = Fetch.get(6).reader().readText();
+const queue = ArrayDeque<Character>();
+const counts = HashMap<Character, Integer>();
+
+for(let i = 0; i < text.length; i++) {
+   const next: Character = text[i];
+   
+   queue.offer(next);
+   counts[next] = (counts[next] ?? 0) + 1;
+   
+   if(i >= 14) {
+      const remove = queue.poll();
+      const count = counts[remove];
+      
+      if(count == 1) {
+         counts.remove(remove);
+      } else {
+         counts.put(remove, count - 1);
+      }
+   }
+   if(counts.size == 14) {
+      println(i + 1);
+      break;
+   }
+}
+
+
+

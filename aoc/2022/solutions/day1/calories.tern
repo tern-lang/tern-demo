@@ -15,4 +15,4 @@ for(line in lines) {
 
 counts.add(total);
 counts.sort((a, b) -> Integer.compare(b, a));
-println(counts.get(0));
+println(counts.get(0) + counts.get(1) + counts.get(2));
