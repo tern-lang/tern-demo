@@ -1,0 +1,21 @@
+#!/usr/bin/env tern
+
+import solutions.Fetch;
+
+const text = Fetch.get(6).reader().readText();
+const counts = {:};
+const size = 14;
+
+for(let i = 0; i < text.length; i++) {
+   counts[text[i]] = (counts[text[i]] ?? 0) + 1;
+   
+   if(i >= size) {
+      if(((counts[text[i - size]] = counts[text[i - size]] - 1)) == 0) {
+         counts.remove(text[i - size]);
+      }
+      if(counts.size == size) {
+         println(i + 1);
+         break;
+      }
+   }
+}
