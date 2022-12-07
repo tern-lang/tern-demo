@@ -1,0 +1,106 @@
+#!/usr/bin/env tern
+
+import util.stream.Collectors;
+import solutions.Fetch;
+
+//5025657
+find(4274331).forEach(x -> println(x.size()));
+   
+func find(size: Integer) {
+   const root = Entry(null, "");
+   const queue = PriorityQueue<Entry>((a, b) -> Integer.compare(a.size(), b.size()));
+   const lines = ArrayDeque<String>(Fetch.get(7)
+      .reader()
+      .readLines());
+   
+   walk(lines, root);
+   
+   return filter(size, root, queue);
+}
+
+func filter(limit: Integer, entry: Entry, found: Queue<Entry>) {
+   let size = entry.size();
+    
+   if(size > limit) {
+      found.offer(entry);
+   }
+   entry.dirs.values.forEach(child -> filter(limit, child, found));
+   return found;
+}
+
+func walk(lines: Deque<String>, entry: Entry) {
+  while(!lines.isEmpty()) {
+     const next = lines.poll();
+
+     if(next.startsWith("$ cd")) {
+        const path = next.split("\\s+")[2];
+        entry = path.equals("..") ? entry.parent : entry.get(path);
+     } else if(next.startsWith("$ ls")) {
+        ls(lines, entry);  
+     }
+  }
+}
+
+func ls(lines: Deque<String>, dir: Entry): List<Entry> {
+   while(!lines.isEmpty()) {
+      const next = lines.peek();
+      
+      if(next.startsWith("$")) {
+        break;
+      }
+      dir.add(next);
+      lines.poll();
+   }
+}
+
+class Entry {
+   const files = {};
+   const dirs = {:};
+   const parent;
+   const name;
+   let size;
+   
+   new(parent, name) {
+      this.parent = parent;
+      this.name = name;
+      this.size = 0;
+   }
+   
+   size() {
+      let total = size;
+      
+      for(dir in dirs.values) {
+         total += dir.size();
+      }
+      return total;
+   }
+   
+   path() {
+      return parent == null ? name : parent + "/" + name;
+   }
+   
+   get(name) {
+      return dirs.computeIfAbsent(name, 
+         key -> Entry(this, key));
+   }
+      
+   add(item) {
+      const pair = item.split(" ");
+      const name = pair[1];
+      
+      if(pair[0].equals("dir")) {
+         get(name);
+      } else {
+         if(files.add(name)) {
+            size += pair[0].toInteger();
+         }
+      }
+   }
+   
+   toString() {
+      "${size} ${name}";
+   }
+}
+
+
+
