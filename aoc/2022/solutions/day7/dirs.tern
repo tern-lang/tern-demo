@@ -3,7 +3,6 @@
 import util.stream.Collectors;
 import solutions.Fetch;
 
-//5025657
 find(4274331).forEach(x -> println(x.size()));
    
 func find(size: Integer) {

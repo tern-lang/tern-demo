@@ -1,0 +1,45 @@
+#!/usr/bin/env tern
+
+import util.stream.Collectors;
+import solutions.Fetch;
+
+const q = build(Fetch.get(7)
+   .reader()
+   .readLines().stream()
+   .map(s -> s.replace("dir ", "0 ").replace("$ ", "").split(" "))
+   .iterator());
+
+while(!q.isEmpty()) {
+   println(q.poll());
+}
+
+func build(l) {  
+   const q = PriorityQueue();
+   const r = {t: 0};
+   let c = r;
+   
+   while(l.hasNext()) {
+      const n = l.next();
+      
+      if(n[0] == "cd"){
+         c = n[1] == "/" ? r : c.computeIfAbsent(n[1], k -> {"..": c, t: 0});
+      } else if(n[0] != "ls"){
+         c.t += n[0].toInteger();
+      }
+   }
+   size(r, q);
+   return q;
+}
+
+func size(r, q) {
+   let t = r.t;
+   
+   for(e in r.entrySet) {
+      if(!{"t",".."}.contains(e.key)) {
+         t += size(e.value, q);
+      }
+   }
+   r.t = t;
+   q.offer(t);
+   return t;
+}
