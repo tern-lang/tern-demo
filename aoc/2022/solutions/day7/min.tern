@@ -10,7 +10,10 @@ const q = build(Fetch.get(7)
    .iterator());
 
 while(!q.isEmpty()) {
-   println(q.poll());
+   if(q.peek() > 4274331){
+      println(q.peek());
+   }
+   q.poll();
 }
 
 func build(l) {  
