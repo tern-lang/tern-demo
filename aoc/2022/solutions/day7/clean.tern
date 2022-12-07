@@ -1,0 +1,188 @@
+#!/usr/bin/env tern
+
+import util.stream.Collectors;
+import util.regex.Pattern;
+import util.function.Predicate;
+import solutions.Fetch;
+
+assert Command.action("$ cd ..").command == Command.ENTER;
+assert Command.action("$ cd ..").argument == "..";
+assert Command.action("$ ls").command == Command.LIST;
+assert Command.action("$ ls").argument == null;
+
+assert Directory(null, "/")
+   .add(File("dir a"))
+   .add(File("12 b"))
+   .add(File("10 c")).size() == 22;
+
+assert Directory(null, "/")
+   .add(File("dir a"))
+   .add(File("12 b"))
+   .add(File("10 c")).search(directory -> directory.size() > 40) == [];
+   
+assert Directory(null, "/")
+   .add(File("dir a"))
+   .add(File("12 b"))
+   .add(File("10 c")).search(directory -> directory.size > 10) != [];   
+
+const input = [
+   "$ cd /",
+   "$ ls",
+   "dir a",
+   "14848514 b.txt",
+   "8504156 c.dat",
+   "dir d",
+   "$ cd a",
+   "$ ls",
+   "dir e",
+   "29116 f",
+   "2557 g",
+   "62596 h.lst",
+   "$ cd e",
+   "$ ls",
+   "584 i",
+   "$ cd ..",
+   "$ cd ..",
+   "$ cd d",
+   "$ ls",
+   "4060174 j",
+   "8033020 d.log",
+   "5626152 d.ext",
+   "7214296 k"
+];
+
+const root = Directory(null, "/");
+const lines = ArrayDeque<String>(Fetch.get(7).reader().readLines());
+
+build(root, lines)
+   .search(directory -> directory.size() >= 4274331)
+   .stream()
+   .sorted((a, b) -> Integer.compare(a.size(), b.size()))
+   .forEach(directory -> println("${directory.name} ${directory.size()}"));
+
+func build(directory: Directory, lines: Deque<String>) {
+  while(!lines.isEmpty()) {
+     const command: String = lines.poll();
+     const action: Action = Command.action(command);
+     
+     directory = action.execute(directory, lines);
+  }
+  return directory.get("/");
+}
+
+class Directory {
+   const files: Map<String, File> = {:};
+   const directories: Map<String, Directory> = {:};
+   const parent: Directory;
+   const name: String;
+   
+   new(parent: Directory, name: String) {
+      this.parent = parent;
+      this.name = name;
+   }
+   
+   size() {
+      const current = files.values().stream().mapToInt(file -> file.size).sum();
+      const children = directories.values().stream().mapToInt(directory -> directory.size()).sum();
+      
+      return current + children;
+   }
+   
+   get(child: String) {
+      if(child.equals("/") ) {
+         return parent == null ? this : parent.get("/");
+      }
+      if(child.equals("..")) {
+         return parent;
+      }
+      return directories.computeIfAbsent(child, ignore -> Directory(this, child));
+   }
+   
+   add(file: File) {
+      if(file.isFile()) {
+         files.putIfAbsent(file.name, file);
+      } else {
+         get(file.name);
+      }
+      return this;
+   }
+   
+   search(filter: Predicate<Directory>) {
+      const matches = filter.test(this) ? [this] : [];
+      
+      directories.values()
+         .stream()
+         .flatMap(directory -> directory.search(filter).stream())
+         .forEach(matches::add);
+         
+      return matches;
+   }
+   
+   toString() {
+      name;
+   }
+}
+
+class Action {
+   const command: Command;
+   const argument: String;
+   
+   new(command: Command, argument: String) {
+      this.command = command;
+      this.argument = argument;
+   }
+   
+   execute(directory: Directory, lines: Queue<String>): Directory {
+      if(command == Command.ENTER) {
+         return directory.get(argument);
+      } else {
+         while(!lines.isEmpty()) {
+            const next = lines.peek();
+      
+            if(next.startsWith("$")) {
+              break;
+            }
+            directory.add(File(next));
+            lines.poll();
+         }
+         return directory;
+      }
+   }
+}
+
+class File {
+   const name: String;
+   const size: Integer;
+   
+   new(file) {
+      this.size = file.startsWith("dir") ? 0 : file.split(" ")[0].toInteger();
+      this.name = file.split(" ")[1];
+   }
+   
+   isFile() {
+      return size != 0;
+   }
+}
+
+enum Command {
+   ENTER("cd"),
+   LIST("ls");
+   
+   const term;
+   
+   new(term) {
+      this.term = term;
+   }
+   
+   static action(command) {
+      const parts = command.split(" ");
+         
+      for(value in values) {
+         if(value.term == parts[1]) {
+            return Action(value, parts.length > 2 ? parts[2] : null);
+         }
+      }
+      throw new IllegalArgumentException("Command '${command}' not supported");
+   }
+}
+

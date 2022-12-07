@@ -34,7 +34,7 @@ func walk(lines: Deque<String>, entry: Entry) {
 
      if(next.startsWith("$ cd")) {
         const path = next.split("\\s+")[2];
-        entry = path.equals("..") ? entry.parent : entry.get(path);
+        walk(lines, path.equals("..") ? entry.parent : entry.get(path));
      } else if(next.startsWith("$ ls")) {
         ls(lines, entry);  
      }
@@ -101,6 +101,4 @@ class Entry {
       "${size} ${name}";
    }
 }
-
-
 
