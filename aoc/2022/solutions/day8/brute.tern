@@ -1,0 +1,57 @@
+#!/usr/bin/env tern
+
+import solutions.Fetch;
+import solutions.Fetch;
+// const g = [
+// "30373",
+// "25512",
+// "65332",
+// "33549",
+// "35390"];
+
+const g = Fetch.get(8)
+   .reader()
+   .readLines();
+
+const q = PriorityQueue((a,b) -> Integer.compare(b,a));
+const w = g[0].length;
+const h = g.length;
+
+
+for(r in 1 to g.length -2){
+ for(c in 1 to g[r].length -2){
+    q.offer(dist(g, r, c));
+ }
+}
+println(q.peek());
+
+
+func dist(g, r, c) {
+   let v = g[r][c];
+   let u = 0;
+   let d = 0;
+   let l = 0;
+   let R = 0;
+   
+   for(let i = r + 1; i < g.length; i++) {
+      d++;
+      if(g[i][c] >= v) break;
+   }
+   for(let i = r - 1; i >= 0; i--) {
+      u++;   
+      if(g[i][c] >= v) break;
+   } 
+   for(let i = c + 1; i < g[r].length; i++) {
+      R++;
+      if(g[r][i] >= v) break;
+   }
+   for(let i = c - 1; i >= 0; i--) {
+      l++;
+      if(g[r][i] >= v) break;
+   } 
+   //println("(${r} ${c}) ${u} * ${d} * ${l} * ${R} --> ${u * d * l * R}");
+   return u * d * l * R;
+}
+
+
+
