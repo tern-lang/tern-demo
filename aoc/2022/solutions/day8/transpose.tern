@@ -1,0 +1,50 @@
+#!/usr/bin/env tern
+
+import solutions.Fetch;
+
+const g = Fetch.ints(8); 
+const p1 = visible(g, p -> p);
+const p2 = visible(transpose(g), p -> p.reverse());
+const b = (2 * g.length + 2 * g[0].length) -4;
+
+func visible(g, f) {
+   const pts = {};
+   
+   for(r in 1 to g.length -2){
+    let m1 = g[r][0];
+    let m2 = g[r][g[r].length - 1];
+    
+    for(i in 1 to g[r].length -2){
+      const c1 = i;
+      const c2 = (g[r].length - 1) - i;
+      
+      if(g[r][c1] > m1) {
+         m1 = g[r][c1];
+         pts.add(f([r,c1]));
+      }
+      if(g[r][c2] > m2) {
+         m2 = g[r][c2];
+         pts.add(f([r,c2]));
+      }
+    }
+   }
+   return pts;
+}
+
+func transpose(l) {
+   const t = [];
+   const n = l[0].length;
+       
+   for(let i = 0; i < n; i++) {
+      const c = [];
+      
+      for(r in l) {
+         c.add(r[i]);
+      }
+      t.add(c);
+   }
+   return t;
+}
+
+p1.addAll(p2);
+println(p1.length + b);

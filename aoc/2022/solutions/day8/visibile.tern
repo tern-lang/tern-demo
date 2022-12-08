@@ -2,9 +2,9 @@
 
 import solutions.Fetch;
 
-const g = Fetch.get(8).reader().readLines();
+const g = Fetch.ints(8);
 const brd = (2 * g.length + 2 * g[0].length)-4;
-const pts = {:};
+const pts = {};
 
 for(r in 1 to g.length -2){
  let m1 = g[r][0];
@@ -16,11 +16,11 @@ for(r in 1 to g.length -2){
    
    if(g[r][c1] > m1) {
       m1 = g[r][c1];
-      pts[[r,c1]] = 1;
+      pts.add([r,c1]);
    }
    if(g[r][c2] > m2) {
       m2 = g[r][c2];
-      pts[[r,c2]] = 1;
+      pts.add([r,c2]);
    }
  }
 }
@@ -35,11 +35,11 @@ for(c in 1 to g[0].length - 2){
    
    if(g[r1][c] > m1) {
       m1 = g[r1][c];
-      pts[[r1,c]] = 1;
+      pts.add([r1,c]);
    }
    if(g[r2][c] > m2) {
       m2 = g[r2][c];
-      pts[[r2,c]] = 1;
+      pts.add([r2,c]);
    }
  }
 }

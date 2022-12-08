@@ -3,6 +3,50 @@ module Fetch {
    const session = "53616c7465645f5f06b49dfe5ccaa7e8467a095372e3867c932f48e4ebf67eba9eb74b304117e5e16273586be7f9f4c353873798b871f1d685b6bd7be8ff6093";
    const year = 2022;
    
+   text(day) {
+      get(day)
+         .reader()
+         .readText();
+   }
+   
+   iterator(day) {
+      lines(day).iterator();
+   }
+   
+   queue(day) {
+      ArrayDeque(lines(day));
+   }
+   
+   ints(day) {
+      lines(day)
+         .stream()
+         .map(l -> l.toCharArray()
+            .iterator()
+            .gather()
+            .stream()
+            .map(c -> c.toInteger())
+            .iterator()
+            .gather())
+         .iterator()
+         .gather();
+   }
+   
+   chars(day) {
+      lines(day)
+         .stream()
+         .map(l -> l.toCharArray()
+            .iterator()
+            .gather())
+         .iterator()
+         .gather();
+   }
+   
+   lines(day) {
+      get(day)
+         .reader()
+         .readLines();
+   }
+   
    get(day) {
       URL("https://adventofcode.com/${year}/day/${day}/input")
          .header("Cookie", "session=${session}")

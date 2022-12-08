@@ -1,8 +1,7 @@
 import solutions.Fetch;
 
-const q = build(Fetch.get(7)
-   .reader()
-   .readLines().stream()
+const q = build(Fetch.lines(7)
+   .stream()
    .map(s -> s.replace("dir ", "0 ").replace("$ ", "").split(" "))
    .iterator());
 

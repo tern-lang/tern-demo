@@ -1,6 +1,6 @@
 import solutions.Fetch;
 
-const t = Fetch.get(6).reader().readText();
+const t = Fetch.text(6);
 const f = (s) -> {
    let a = new Integer[256];
    let x = 0;

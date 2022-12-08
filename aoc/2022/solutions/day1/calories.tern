@@ -1,6 +1,6 @@
 import solutions.Fetch;
 
-const lines = Fetch.get(1).reader.readLines;
+const lines = Fetch.lines(1);
 const counts = [];
 let total = 0;
 
