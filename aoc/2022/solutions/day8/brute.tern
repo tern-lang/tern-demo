@@ -2,10 +2,7 @@
 
 import solutions.Fetch;
 
-const g = Fetch.get(8)
-   .reader()
-   .readLines();
-
+const g = Fetch.get(8).reader().readLines();
 const q = PriorityQueue((a,b) -> Integer.compare(b,a));
 const w = g[0].length;
 const h = g.length;

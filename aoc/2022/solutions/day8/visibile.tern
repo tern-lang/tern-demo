@@ -2,10 +2,7 @@
 
 import solutions.Fetch;
 
-const g = Fetch.get(8)
-   .reader()
-   .readLines();
-
+const g = Fetch.get(8).reader().readLines();
 const brd = (2 * g.length + 2 * g[0].length)-4;
 const pts = {:};
 
