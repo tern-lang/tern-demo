@@ -1,0 +1,128 @@
+#!/usr/bin/env tern
+
+import solutions.Fetch;
+
+//const i = Fetch.iterator(9); 
+const i = [
+"R 5",
+"U 8",
+"L 8",
+"D 3",
+"R 17",
+"D 10",
+"L 25",
+"U 20"].iterator();
+const r = Rope();
+// r.dump();
+while(i.hasNext()) {
+   const n = i.next().split(" ");
+   const m = Move.resolve(n[0]);
+   
+   r.move(m, n[1].toInteger());
+}
+
+r.dump();
+println(r.s.size);
+
+class Rope {
+   let h: Pos;
+   let t: Pos;
+   let s = {};
+   let c = 0;
+   new() {
+      this.h = Pos(30, 30);
+      this.t = Pos(30, 30);
+   }
+   
+   move(m: Move, c: Integer) {
+      for(i in 1 to c) {
+         h = h.move(m);
+         t = t.follow(h);
+         // dump();
+         s.add([t.x,t.y]);
+      }
+   }
+   
+   dump() {
+      c++;
+      println("(${c}) head=${h} tail=${t}");
+      for(y in 1 to 60) {
+       for(x in 1 to 60) {
+          if(h.x == x && h.y == y) {
+             print("H");
+          } else if(t.x == x && t.y == y) {
+             print("T");
+          } else if(s.contains([x,y])){
+             print("#");
+          } else {
+             print(".");
+          }
+       }
+       println();
+      }
+      println();
+   }
+}
+
+class Pos {
+  const x;
+  const y;
+  
+  new(x, y) {
+     this.x = x;
+     this.y = y;
+  }
+  
+  move(m: Move) {
+     Pos(x + m.x, y + m.y);
+  }
+  
+  follow(p: Pos) {
+     const d = dist(p);
+     
+     if(d > 1) {
+        if(x == p.x || Math.abs(y - p.y) == 2) {
+           return Pos(p.x, y > p.y ? p.y + 1 : p.y- 1);
+        } 
+        if(y == p.y || Math.abs(x - p.x) == 2) {
+           return Pos(x > p.x ? p.x + 1 : p.x- 1, p.y);        
+        }
+     }
+     return this; // no move
+  }
+  
+  dist(p: Pos) {
+     const x = Math.abs(x - p.x);
+     const y = Math.abs(y - p.y);
+     
+     return x + y;
+  }
+  
+  toString() {
+     "${x}, ${y}";
+  }
+}
+
+enum Move {
+   UP(0, -1),
+   DOWN(0, 1),
+   LEFT(-1, 0),
+   RIGHT(1, 0);
+   
+   const x;
+   const y;
+   
+   new(x, y) {
+      this.x = x;
+      this.y = y;
+   }
+   
+   static resolve(d) {
+      switch(d) {
+         case 'U': return UP;
+         case 'D': return DOWN;
+         case 'L': return LEFT;
+         case 'R': return RIGHT;
+      }
+   }
+}
