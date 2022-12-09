@@ -2,17 +2,26 @@
 
 import solutions.Fetch;
 
-//const i = Fetch.iterator(9); 
-const i = [
-"R 5",
-"U 8",
-"L 8",
-"D 3",
-"R 17",
-"D 10",
-"L 25",
-"U 20"].iterator();
-const r = Rope();
+const i = Fetch.iterator(9); 
+// const i = [
+// "R 5",
+// "U 8",
+// "L 8",
+// "D 3",
+// "R 17",
+// "D 10",
+// "L 25",
+// "U 20"].iterator();
+// const i = [
+// "R 4",
+// "U 4",
+// "L 3",
+// "D 1",
+// "R 4",
+// "D 1",
+// "L 5",
+// "R 2"].iterator();
+const r = Rope(10);
 // r.dump();
 while(i.hasNext()) {
    const n = i.next().split(" ");
@@ -21,47 +30,50 @@ while(i.hasNext()) {
    r.move(m, n[1].toInteger());
 }
 
-r.dump();
+//r.dump();
 println(r.s.size);
 
 class Rope {
-   let h: Pos;
-   let t: Pos;
-   let s = {};
+   const k: List<Pos>;
+   const s = {};
    let c = 0;
-   new() {
-      this.h = Pos(30, 30);
-      this.t = Pos(30, 30);
+   new(length) {
+      this.k = [].fill(Pos(1000000, 1000000), length);
    }
    
    move(m: Move, c: Integer) {
       for(i in 1 to c) {
-         h = h.move(m);
-         t = t.follow(h);
+         k[0] = k[0].move(m);
+         
+         for(j in 1 to k.length - 1) {
+            k[j] = k[j].follow(k[j - 1]);
+         }
          // dump();
-         s.add([t.x,t.y]);
+         s.add([k[k.length -1].x,k[k.length-1].y]);
       }
    }
    
-   dump() {
-      c++;
-      println("(${c}) head=${h} tail=${t}");
-      for(y in 1 to 60) {
-       for(x in 1 to 60) {
-          if(h.x == x && h.y == y) {
-             print("H");
-          } else if(t.x == x && t.y == y) {
-             print("T");
-          } else if(s.contains([x,y])){
-             print("#");
-          } else {
-             print(".");
-          }
-       }
-       println();
-      }
-      println();
-   }
+   // dump() {
+   //    const h = k[0];
+   //    const t = k[k.length -1];
+   //    c++;
+   //    println("(${c}) head=${h} tail=${t}");
+   //    for(y in 1 to 60) {
+   //     for(x in 1 to 60) {
+   //        if(h.x == x && h.y == y) {
+   //           print("H");
+   //        } else if(t.x == x && t.y == y) {
+   //           print("T");
+   //        } else if(s.contains([x,y])){
+   //           print("#");
+   //        } else {
+   //           print(".");
+   //        }
+   //     }
+   //     println();
+   //    }
+   //    println();
+   // }
 }
 
 class Pos {
