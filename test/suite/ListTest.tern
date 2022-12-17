@@ -42,5 +42,9 @@ class ListTest with TestCase {
       assert !list1.contains(v2);
       assert list1.contains(v3);
       assert list2.contains(v2);
+      
+      assert [1, 2, 3, 4].sliding(2) == [[1, 2], [2, 3], [3, 4]];
+      assert [1, 2, 3].map(_ + 1) == [2, 3, 4];
+      assert [].fill(3)("a").map(_.toUpperCase()) == ["A", "A", "A"];
    }
 }

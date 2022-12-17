@@ -7,11 +7,12 @@ println(plot(10));
 
 func plot(s) {
    const r = Rope(s);
+   const m = r::move;
    
    Fetch.lines(9)
       .stream()
-      .map(s -> s.split(" "))
-      .forEach(n -> r.move(n[0], n[1].toInteger()));
+      .map(_.split(" "))
+      .forEach(m(_[0], _[1].toInteger()));
    
    return r.s.size;
 }
@@ -21,7 +22,7 @@ class Rope {
    const s = {};
 
    new(length) {
-      this.k = [].fill(Pos(10 ^ 5, 10 ^ 5), length);
+      this.k = [].fill(length)(Pos(10 ^ 5, 10 ^ 5));
    }
    
    move(d: String, c: Integer) {
@@ -36,21 +37,14 @@ class Rope {
    }
 }
 
-class Pos {
-  const x;
-  const y;
-  
-  new(x, y) {
-     this.x = x;
-     this.y = y;
-  }
+class Pos(x, y) {
   
   move(d: String) {
-    switch(d) {
-      case 'U': return Pos(x,  y - 1);
-      case 'D': return Pos(x, y + 1);
-      case 'L': return Pos(x - 1, y);
-      case 'R': return Pos(x + 1, y);
+    match(d) {
+      case 'U': Pos(x,  y - 1);
+      case 'D': Pos(x, y + 1);
+      case 'L': Pos(x - 1, y);
+      case 'R': Pos(x + 1, y);
     }  
   }
   

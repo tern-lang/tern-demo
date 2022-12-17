@@ -3,8 +3,8 @@ import util.regex.Pattern;
 
 var ROOT = "C:\\Work\\development\\ternlang\\snap-develop\\snap-develop\\work\\android";
 
-var SOURCE = new File("${ROOT}\\mario");
-// var DESTINATION = new File("${ROOT}\\mario");
+var SOURCE = new File("${ROOT_PATH}\\mario");
+// var DESTINATION = new File("${ROOT_PATH}\\mario");
 
 // DESTINATION.mkdirs();
 

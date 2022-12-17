@@ -1,16 +1,1 @@
-let s: String = "";
-
-s.length();
-
-
-let x: List<String> = [];
-
-x.add("xx");
-x.add(1);
-
-func foo<T>(t: T): T {
-   return "t";
-}
-
-
-println(foo<Integer>("10"));
+['hello', 'world'].forEach(printf('%s-%s%n', _[0], _[1].toUpperCase()));

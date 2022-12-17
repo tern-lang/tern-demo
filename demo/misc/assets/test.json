@@ -11,7 +11,7 @@
         "https://${domain}/"
       ],
       "static-resources": {
-      	"directory": "${root}",
+      	"directory": "${ROOT_PATH}",
       	"path": "/static/.*"
       },
       "access-log": {
@@ -21,7 +21,7 @@
       },
       "key-store": {
         "type": "PKCS12",
-        "path": "${root}/certificate/${domain}/${domain}.pfx",
+        "path": "${ROOT_PATH}/certificate/${domain}/${domain}.pfx",
         "password": "password12",
         "protocols": [],
         "cipher-suites": [

@@ -1,16 +1,11 @@
 import solutions.Fetch;
 
 func find(i) {
-   Fetch.get(6)
+   return Fetch.get(6)
       .reader()
       .readText()
       .sliding(i)
-      .elements()
-      .stream()
-      .filter(s -> s.value.distinct.length == i)
-      .findFirst()
-      .map(s -> s.source.indexOf(s.value) + i)
-      .get();
+      .indexWhere(_.distinct.length == i) + i;
 }
 
 println("${find(4)} ${find(14)}");

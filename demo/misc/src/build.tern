@@ -1,0 +1,163 @@
+import util.stream.Collectors;
+
+enum OperatingSystem {
+   WINDOWS,
+   LINUX;
+   
+   isWindows() {
+      return this == WINDOWS;
+   }
+   
+   static resolve() {
+      return System.getProperty("os.name")
+         .toLowerCase()
+         .contains("win") ? WINDOWS : LINUX;
+   }
+}
+
+
+const OS = OperatingSystem.resolve();
+const MAVEN_PATH = OS.isWindows() ? "C:/Work/tools/maven/apache-maven-3.5.4/bin/mvn.cmd" : "/usr/bin/mvn";
+const JAVA_PATH = OS.isWindows() ? "C:/Program Files/Java/jdk-15.0.2/bin" : "/usr/lib/jvm/zulu15/bin";
+const ROOT_PATH = OS.isWindows() ? "C:/Work/development/tern-lang" : "/mnt/c/Work/development/tern-lang";
+const RANDOM = UUID.randomUUID().toString().replace("-", "").toUpperCase();
+const VERSION = "1.4.6";
+
+build();
+copy();
+
+// build CLI
+package(
+   path: "${ROOT_PATH}/tern-build/build-cli",
+   name: "tern", // lower case CLI
+   format: OS.isWindows() ? "msi" : "app-image",
+   icon: "${ROOT_PATH}/tern-build/tern.ico",
+   jar: "${ROOT_PATH}/tern-build/build-cli/${RANDOM}.jar",   
+   main: "org.ternlang.studio.agent.local.LocalProcess",
+   options: [],
+   arguments: OS.isWindows() ? ["--win-console"] : []); 
+
+// build studio
+package(
+   path: "${ROOT_PATH}/tern-build/build",
+   name: "Tern Studio", // uppercase
+   format: OS.isWindows() ? "msi" : "app-image",
+   icon: "${ROOT_PATH}/tern-build/ternd.ico",
+   jar:  "${ROOT_PATH}/tern-build/build/${RANDOM}d.jar",
+   main: "org.ternlang.studio.StudioApplication",
+   options: ["-Dorg.ternlang.studio.allowFork=false", "-Djava.library.path=$APPDIR/cef/3.3538.1852.gcb937fc"],
+   arguments: ["--jlink-options \"--strip-debug --no-man-pages --no-header-files\""]);
+
+cleanUp();
+
+func build() {
+   exec("${MAVEN_PATH} clean install", "${ROOT_PATH}/tern")
+      .forEachRemaining(this::println);
+
+   exec("${MAVEN_PATH} clean install", "${ROOT_PATH}/tern-studio")
+      .forEachRemaining(this::println);
+}
+
+func copy() {
+   exec("cp ${ROOT_PATH}/tern-studio/tern-studio/target/ternd.jar ${ROOT_PATH}/tern-build/build/${RANDOM}d.jar")
+      .forEachRemaining(this::println);
+
+   exec("cp ${ROOT_PATH}/tern-studio/tern-studio-agent/target/tern.jar ${ROOT_PATH}/tern-build/build-cli/${RANDOM}.jar")
+      .forEachRemaining(this::println);
+}
+
+func cleanUp() {
+   exec("rm ${ROOT_PATH}/tern-build/build/${RANDOM}d.jar")
+      .forEachRemaining(this::println);
+
+   exec("rm ${ROOT_PATH}/tern-build/build-cli/${RANDOM}.jar")
+      .forEachRemaining(this::println);
+}
+
+
+func package(path, name, format, icon, jar, main, options, arguments) {
+   const command = ["\"${JAVA_PATH}/jpackage\""];
+
+   command.addAll([
+      "--input \"${path}\"",
+      "--name \"${name}\"",
+      "--icon \"${icon}\"",
+      "--main-jar \"${jar}\"",
+      "--main-class ${main}"
+   ]);
+   
+   command.addAll(arguments);
+   
+   for(option in options) {
+      command.add("--java-options \"${option}\"");
+   }
+   
+   command.addAll([
+      "--app-version ${VERSION}",
+      "--win-dir-chooser",
+      "--type ${format}",
+      "--java-options \"-Dinstall.home=$APPDIR\"",
+      "--java-options \"-Dsun.java2d.uiScale=1\"",
+      "--java-options \"-XX:+IgnoreUnrecognizedVMOptions\""
+   ]);
+   
+   addOpens(command, "java.base", [
+      "jdk.internal.loader",
+      "java.lang",
+      "java.security",
+      "java.math",
+      "java.text",
+      "java.time",
+      "java.time.zone",
+      "java.io",
+      "java.net",
+      "java.nio",
+      "java.nio.channels",
+      "java.util",
+      "java.util.regex",
+      "java.util.function",
+      "java.util.stream",
+      "java.util.concurrent",
+      "java.util.concurrent.atomic"]);
+   
+   addOpens(command, "java.desktop", [
+      "java.awt",
+      "java.awt.color",
+      "java.awt.event",
+      "java.awt.image",
+      "java.awt.font",
+      "javax.sound.midi",
+      "javax.sound.sampled",
+      "javax.swing",
+      "javax.swing.border",
+      "javax.imageio"]);
+      
+   const execute = command.stream().collect(Collectors.joining(" ")).trim();      
+   
+   println(execute);
+   exec(execute).forEachRemaining(this::println);
+   rename(name);
+}
+
+func rename(name) {
+   const original = OS.isWindows() ? "${name}-${VERSION}.msi" : "${name}";
+   const update = OS.isWindows() ? "${name}-windows-${VERSION}.msi" : "${name}-linux-${VERSION}";
+   const result = update.replace(" ", "-").toLowerCase();
+   
+   File(original).moveTo(result);
+   
+   if(File(result).isDirectory()) {
+      File(result).zip();
+   }
+}
+
+func addOpens(command, name, packages) {
+   for (entry in packages) {
+      const value = "--java-options \"--add-opens=${name.trim()}/${entry.trim()}=ALL-UNNAMED\"";
+
+      if (!command.contains(value)) {
+         command.add(value);
+      }
+   }
+}
+

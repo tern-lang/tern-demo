@@ -1,0 +1,21 @@
+import test.TestCase;
+
+import static lang.Double.*;
+
+class PlaceHolderTest with TestCase {
+
+   testPlaceHolder(){
+      assert ['a', 'b', 'c'].map(_.toUpperCase()) == ['A', 'B', 'C'];
+      assert ['1.2', '2.2', '22.1'].map(parseDouble(_)) == [1.2, 2.2, 22.1];      
+      assert [0 .. 4].map(_ > 2) == [false, false, false, true, true];      
+      assert [0 .. 4].filter(_ % 2 == 0) == [0, 2, 4];        
+   }
+   
+   testFunctionalPlaceHolder() {
+      assert [1, 2, 3, 4].dropWhile(_ < 2) == [2,3,4];
+      assert [1, 2, 3, 4].takeWhile(_ < 2) == [1];
+      assert [0 .. 10].take(4) == [0, 1, 2, 3];      
+      assert [2 .. 12].drop(8) == [10, 11, 12];        
+      assert [0 .. 10].filter(_ == 1 || _ == 2) == [1, 2];   
+   }
+}

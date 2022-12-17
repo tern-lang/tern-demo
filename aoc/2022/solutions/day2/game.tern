@@ -1,31 +1,19 @@
 import solutions.Fetch;
 
-enum Score {
+enum Score(value) {
    WIN(6),
    DRAW(3),
    LOSE(0);
-   
-   let value;
-   
-   new(value) {
-      this.value = value;
-   }
    
    toString() {
       "${name} (${value})";
    }
 }
 
-enum Move {
+enum Move(value) {
    ROCK(1),
    PAPER(2),
    SCISSORS(3);
-   
-   let value;
-   
-   new(value) {
-      this.value = value;
-   }
    
    outcome(score: Score) {
       if(score == Score.DRAW) {

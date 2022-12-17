@@ -3,8 +3,8 @@ import util.regex.Pattern;
 
 var ROOT = "C:\\Work\\development\\tern-lang\\tern-studio\\tern-studio\\work\\demo\\games\\src\\pacman";
 
-var SOURCE = new File("${ROOT}\\old");
-var DESTINATION = new File("${ROOT}\\new");
+var SOURCE = new File("${ROOT_PATH}\\old");
+var DESTINATION = new File("${ROOT_PATH}\\new");
 
 if(!SOURCE.exists()) {
    System.err.println("Could not find ${SOURCE}");
@@ -37,7 +37,7 @@ function build(path, name, sources){
    println("${path}: ${name} -> ${sources}");
    
    for(var source in sources){
-      // if(source.getAbsolutePath().indexOf("${ROOT}") == -1){
+      // if(source.getAbsolutePath().indexOf("${ROOT_PATH}") == -1){
       //    throw "Invalid source";
       // }
       var result = new File(source.getCanonicalPath().replace("${SOURCE}", "${DESTINATION}").replace(".java", ".tern"));

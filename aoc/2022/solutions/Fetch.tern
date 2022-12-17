@@ -41,6 +41,14 @@ module Fetch {
          .gather();
    }
    
+   split(day) {
+      lines(day)
+         .stream()
+         .map(l -> l.split(" "))
+         .iterator()
+         .gather();
+   }
+   
    lines(day) {
       get(day)
          .reader()
@@ -52,6 +60,6 @@ module Fetch {
          .header("Cookie", "session=${session}")
          .get()
          .response()
-         .getInputStream();
+         .stream();
    }
 }

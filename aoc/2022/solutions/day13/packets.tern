@@ -1,0 +1,7 @@
+#!/usr/bin/env tern
+
+const l = [];
+const add = l::add;
+
+[1,2,3].map(add(_ + _));
+println(l);

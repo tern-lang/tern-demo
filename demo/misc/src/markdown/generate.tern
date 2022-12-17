@@ -15,9 +15,9 @@ import markdown.element.HtmlElement;
 
 let root = "C:\\Work\\development\\tern-lang";
 
-generate(Page.HOME, "${root}\\tern\\README.md", "${root}\\tern-site\\tern-lang.org\\index.html");
-generate(Page.DOWNLOAD, "${root}\\tern-site\\tern-lang.org\\download\\README.md", "${root}\\tern-site\\tern-lang.org\\download\\index.html");
-generate(Page.GUIDE, "${root}\\tern-site\\tern-lang.org\\videos\\README.md", "${root}\\tern-site\\tern-lang.org\\videos\\index.html");
+generate(Page.HOME, "${ROOT_PATH}\\tern\\README.md", "${ROOT_PATH}\\tern-site\\tern-lang.org\\index.html");
+generate(Page.DOWNLOAD, "${ROOT_PATH}\\tern-site\\tern-lang.org\\download\\README.md", "${ROOT_PATH}\\tern-site\\tern-lang.org\\download\\index.html");
+generate(Page.GUIDE, "${ROOT_PATH}\\tern-site\\tern-lang.org\\videos\\README.md", "${ROOT_PATH}\\tern-site\\tern-lang.org\\videos\\index.html");
 
 
 func generate(page: Page, readme: String, destination: String): String {
